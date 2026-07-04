@@ -24,7 +24,6 @@ const screenWidth = window.innerWidth;
 
 const providers = [
   { id: "credentials", name: "Email and Password" },
-  // { id: 'github', name: 'GitHub' },
   { id: "google", name: "Google" },
 ];
 
@@ -97,7 +96,6 @@ export default function userAuth() {
   //get result of redirect
   getRedirectResult(auth)
     .then((result) => {
-      console.log(result)
       // This gives you a Google Access Token. You can use it to access Google APIs.
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential.accessToken;

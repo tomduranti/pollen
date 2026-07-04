@@ -20,7 +20,7 @@ export default function App() {
           <PollenDashboard defaultOrUserLocale={defaultLocale} userDataForSearchArray={userSearch}/>
         </section>
 
-        <UserAuth />
+        {/* <UserAuth /> */}
       </main>
     </>
   )

@@ -1,11 +1,9 @@
 import { getDatabase, ref, update } from "firebase/database";
 import { app, auth } from './firebaseConfig.js'
 
-export function updateProfilePicture(userId, imageUrl) {
+export function updateUserInfo(objWithUpdatedInfo) {
     const db = getDatabase(app);
-    update(ref(db, 'users/' + userId), {
-        profilePicture: imageUrl
-    });
+    update(ref(db, 'users/' + getUserUID()), objWithUpdatedInfo);
 }
 
 export function getUserUID() {

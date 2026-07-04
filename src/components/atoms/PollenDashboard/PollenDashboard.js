@@ -1,5 +1,5 @@
 export default async function getPollenFromAPI(locale, array, wrapper) {
-    const url = `https://www.polleninformation.at/api/forecast/public?country=${array.country}&lang=${locale}&latitude=${array.latitude}&longitude=${array.longitude}&apikey=${import.meta.env.VITE_POLLEN_API_KEY}`;
+    const url = `https://www.polleninformation.at/api/forecast/public?country=${array.countryCode}&lang=${locale}&latitude=${array.latitude}&longitude=${array.longitude}&apikey=${import.meta.env.VITE_POLLEN_API_KEY}`;
     try {
         const response = await fetch(url);
         if (!response.ok) {

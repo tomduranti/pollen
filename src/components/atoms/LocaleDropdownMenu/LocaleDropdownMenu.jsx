@@ -89,15 +89,6 @@ export default function LocaleDropdownMenu() {
         <MenuItem onClick={handleClose} disableRipple>
           EN English
         </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          FR French
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          IT Italian
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          ES Spanish
-        </MenuItem>
       </StyledMenu>
     </div>
   );

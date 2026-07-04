@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "",
+    apiKey: `${import.meta.env.VITE_FIREBASE_API_KEY}`,
     authDomain: "pollen-dfce3.firebaseapp.com",
     projectId: "pollen-dfce3",
     storageBucket: "pollen-dfce3.firebasestorage.app",
