@@ -7,6 +7,6 @@ export function updateUserInfo(objWithUpdatedInfo) {
 }
 
 export function getUserUID() {
-    const userId = auth.currentUser.uid;
+    const userId = auth.currentUser;
     return userId;
 }

@@ -21,3 +21,18 @@ export function validatePassword(passwordToValidate) {
             .safeParse(passwordToValidate)
     )
 }
+
+export function validateForm(email, wrapperErrorEmail, password, wrapperErrorPassword) {
+    const emailSchema = validateEmail(email);
+    const passwordSchema = validatePassword(password);
+
+    !emailSchema.success
+    ? wrapperErrorEmail(emailSchema.error.issues[0].message)
+    : wrapperErrorEmail('');
+
+    !passwordSchema.success
+    ? wrapperErrorPassword(passwordSchema.error.issues[0].message)
+    : wrapperErrorPassword('');
+
+    if (emailSchema.success && passwordSchema.success) return true;
+}

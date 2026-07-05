@@ -1,27 +1,27 @@
 //react and components
 import { useState } from "react";
-import SearchBar from './components/atoms/SearchBar/SearchBar.jsx';
-import PollenDashboard from './components/atoms/PollenDashboard/PollenDashboard.jsx';
-import NavBar from './components/Molecules/NavBar/NavBar.jsx';
-import UserAuth from './components/atoms/UserAuth/UserAuth.jsx';
+import { BrowserRouter, Routes, Route } from 'react-router';
+import NavBar from './components/atoms/NavBar/NavBar.jsx';
+import Home from './pages/Home/Home.jsx';
+import SignUp from './pages/SignUp/SignUp.jsx';
+import SignIn from './pages/SignIn/SignIn.jsx';
 
 export default function App() {
   const defaultLocale = 'en';
   const [userSearch, setUserSearch] = useState({});
 
   return (
-    <>
+    <BrowserRouter>
       <header>
         <NavBar />
       </header>
       <main>
-        <section>
-          <SearchBar defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch}/>
-          <PollenDashboard defaultOrUserLocale={defaultLocale} userDataForSearchArray={userSearch}/>
-        </section>
-
-        {/* <UserAuth /> */}
+        <Routes>
+          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch} userDataForSearchArray={userSearch} />} />
+          <Route path='signup' element={<SignUp />} />
+          <Route path='signin' element={<SignIn />} />
+        </Routes>
       </main>
-    </>
+    </BrowserRouter>
   )
 }

@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: `${import.meta.env.VITE_FIREBASE_API_KEY}`,
-    authDomain: "pollen-dfce3.firebaseapp.com",
-    projectId: "pollen-dfce3",
-    storageBucket: "pollen-dfce3.firebasestorage.app",
-    messagingSenderId: "726631837444",
-    appId: "1:726631837444:web:b9452e1444bfd55a932a51",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGE_SENDER_ID,
     measurementId: "G-PFFMW6TX1L",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
     databaseURL: "https://pollen-dfce3-default-rtdb.europe-west1.firebasedatabase.app/",
   };
   
