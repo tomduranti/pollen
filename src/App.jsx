@@ -28,7 +28,7 @@ export default function App() {
       </header>
       <main>
         <Routes>
-          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch} userDataForSearchArray={userSearch} />} />
+          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch} userDataForSearchArray={userSearch} isUserSignedIn={isUserSignedIn} />} />
           {/* Email and Password paths */}
           <Route path='signup' element={<AuthForm authMode={'signup'} />} />
           <Route path='signin' element={<AuthForm authMode={'signin'} />} />
