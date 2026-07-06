@@ -8,50 +8,64 @@ import { auth } from "../../utils/firebaseConfig.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function AuthForm({ authMode }) {
-    const initialState = false;    
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessageEmail, setErrorMessageEmail] = useState('');
-    const [errorMessagePassword, setErrorMessagePassword] = useState('');
-    const [errorMessageInput, setErrorMessageInput] = useState(initialState);
-    const [isFormValid, setIsFormValid] = useState(initialState);
     const navigate = useNavigate();
     const authKeyword = authMode === 'signup' ? 'SignUp' : 'SignIn';
 
-    if (isFormValid) {
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [errorMessageCredentials, setErrorMessageCredentials] = useState({ errorEmail: '', errorPassword: '' });
+    const [errorMessageValidation, seterrorMessageValidation] = useState(false);
 
-        //Singup mode
-        if (authMode === 'signup') {
-            //if email credentials are valid, create a user in Firebase DB
-            //if the email already exists, prompt the user to SignIn
-            setErrorMessageInput(initialState);
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed up
-                    const user = userCredential.user;
-                })
-                .catch((error) => {
-                    error.code === "auth/email-already-in-use" && setErrorMessageInput(true);
-                })
-            //if the user was created successfully, redirect user to home page
-            setIsFormValid(initialState);
-            if (!errorMessageInput) return navigate('/');
-        }
+    const handleClick = (event) => {
+        //prevent form to refresh the page
+        event.preventDefault();
+        //validating email and password
+        let isFormValid = validateForm(credentials.email, credentials.password, errorMessageCredentials, setErrorMessageCredentials);
+        let errorMessage = false;
+        //creating/loggin in user
+        if (isFormValid) {
+            //Signup mode
+            if (authMode === 'signup') {
+                //if email credentials are valid, create a user in Firebase DB
+                //if the email already exists, prompt the user to SignIn
 
-        //Signin mode
-        else if (authMode === 'signin') {
-            setErrorMessageInput(initialState);
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                })
-                .catch((error) => {
-                    console.log(error.code)
-                    error.code === "auth/invalid-credential" && setErrorMessageInput(true);
-                });
-            //if the user signed in successfully, redirect user to home page
-            setIsFormValid(initialState);
-            if (!errorMessageInput) return navigate('/');
+                createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
+                    .then(userCredential => {
+                        // Signed up
+                        const user = userCredential.user;
+                    })
+                    .catch(error => {
+                        if (error.code === "auth/email-already-in-use") errorMessage = true;
+                        seterrorMessageValidation(true);
+                    })
+                    .then(() => {
+                        //if there's an error, kill this block
+                        if (errorMessage) return;
+                        //if there's no error, the user signed up successfully, redirect user to home page
+                        seterrorMessageValidation(false);
+                        if (errorMessage === false) return navigate('/');
+                    }
+                )
+            }
+
+            //Signin mode
+            else if (authMode === 'signin') {
+                signInWithEmailAndPassword(auth, credentials.email, credentials.password)
+                    .then(userCredential => {
+                        const user = userCredential.user;
+                    })
+                    .catch(error => {
+                        if (error.code === "auth/invalid-credential") errorMessage = true;
+                        seterrorMessageValidation(true);
+                    })
+                    .then(() => {
+                        //if there's an error, kill this block
+                        if (errorMessage) return;
+                        //if there's no error, the user signed in successfully, redirect user to home page
+                        seterrorMessageValidation(false);
+                        if (errorMessage === false) return navigate('/');
+                    }
+                )
+            }
         }
     }
 
@@ -64,22 +78,22 @@ export default function AuthForm({ authMode }) {
             <form noValidate>
                 <label htmlFor="email">Email address</label>
                 <input type="email" name="mail"
-                    required aria-describedby="" aria-invalid="false" onChange={e => setEmail(e.target.value)} />
-                <div id="error" aria-live="polite">{errorMessageEmail}</div>
+                    required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, email: e.target.value })} />
+                <div id="error" aria-live="polite">{errorMessageCredentials.errorEmail}</div>
                 <label htmlFor="password">Password</label>
                 <input type="password" name="password"
-                    required aria-describedby="" aria-invalid="false" onChange={e => setPassword(e.target.value)} />
-                <div id="error" aria-live="polite">{errorMessagePassword}</div>
-                <button type="submit" id="submit" onClick={e => { return e.preventDefault(), setIsFormValid(validateForm(email, setErrorMessageEmail, password, setErrorMessagePassword)) }}>{authKeyword}</button>
+                    required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, password: e.target.value })} />
+                <div id="error" aria-live="polite">{errorMessageCredentials.errorPassword}</div>
+                <button type="submit" id="submit" onClick={e => handleClick(e)}>{authKeyword}</button>
 
                 {authMode === 'signin'
                     ? <div>Don't have an account? <NavLink to='/signup'>SignUp</NavLink></div>
                     : <div>Already have an account? <NavLink to='/signin'>SignIn</NavLink></div>
                 }
 
-                {(errorMessageInput && authMode === 'signup') && <div id="error" aria-live="polite">This email is already in use. Try to <NavLink to='/signin'>SignIn</NavLink></div>}
-                {(errorMessageInput && authMode === 'signin') && <div id="error" aria-live="polite">Invalid email or password</div>}
-            
+                {(errorMessageValidation && authMode === 'signup') && <div id="error" aria-live="polite">This email is already in use. Try to <NavLink to='/signin'>SignIn</NavLink></div>}
+                {(errorMessageValidation && authMode === 'signin') && <div id="error" aria-live="polite">Invalid email or password</div>}
+
             </form>
         </>
     )

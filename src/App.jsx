@@ -1,5 +1,5 @@
 //react and components
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/atoms/NavBar/NavBar.jsx';
 import Home from './pages/Home/Home.jsx';
@@ -20,11 +20,6 @@ export default function App() {
     user && setIsUserSignedIn(user.uid);
     !user && setIsUserSignedIn(null);
   });
-
-
-  useEffect(() => {
-    console.log(isUserSignedIn);
-  }, [isUserSignedIn])
 
   return (
     <BrowserRouter>

@@ -22,17 +22,17 @@ export function validatePassword(passwordToValidate) {
     )
 }
 
-export function validateForm(email, wrapperErrorEmail, password, wrapperErrorPassword) {
+export function validateForm(email, password, arrayError, wrapperError) {
     const emailSchema = validateEmail(email);
     const passwordSchema = validatePassword(password);
 
     !emailSchema.success
-    ? wrapperErrorEmail(emailSchema.error.issues[0].message)
-    : wrapperErrorEmail('');
+    ? wrapperError({...arrayError, errorEmail: emailSchema.error.issues[0].message})
+    : null;
 
     !passwordSchema.success
-    ? wrapperErrorPassword(passwordSchema.error.issues[0].message)
-    : wrapperErrorPassword('');
+    ? wrapperError({...arrayError, errorPassword: passwordSchema.error.issues[0].message})
+    : null;
 
     if (emailSchema.success && passwordSchema.success) return true;
 }
