@@ -29,8 +29,12 @@ export default function App() {
       <main>
         <Routes>
           <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch} userDataForSearchArray={userSearch} />} />
+          {/* Email and Password paths */}
           <Route path='signup' element={<AuthForm authMode={'signup'} />} />
           <Route path='signin' element={<AuthForm authMode={'signin'} />} />
+          {/* Providers don't have sinup/signin distinction */}
+          <Route path='signup' element={<AuthForm />} />
+          <Route path='signin' element={<AuthForm />} />
         </Routes>
       </main>
     </BrowserRouter>
