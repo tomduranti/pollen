@@ -1,5 +1,5 @@
 //react and components
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from "react-router";
 
 //functions

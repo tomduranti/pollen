@@ -1,24 +1,27 @@
 //react and components
 import { SearchBox } from "@mapbox/search-js-react";
 import { useState, useEffect } from "react";
+import Loading from '../../components/atoms/Loading/Loading.jsx';
 
 //functions
 import { getLocationFromAPI, getPollenFromAPI } from "./Home.js";
 import getCurrentHour from "../../utils/getCurrentHour.js";
 
-//FOR DEV ONLY
-import mockData from "./pollenMockData.json";
-
 export default function Home({ defaultOrUserLocale, userDataForSearchWrapper, userDataForSearchArray }) {
 
     const [pollenData, setPollenData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
+
         //early return to prevent crash from empty object
         if (Object.entries(userDataForSearchArray).length === 0) return;
-        getPollenFromAPI(defaultOrUserLocale, userDataForSearchArray, setPollenData);
+        setIsLoading(true);
+        getPollenFromAPI(defaultOrUserLocale, userDataForSearchArray, setPollenData)
+            .then(() => {
+                setIsLoading(false);
+            })
     }, [userDataForSearchArray]);
-
 
     const pollenList = pollenData.map(item => {
         return item.contamination?.map(subitem => {
@@ -51,16 +54,17 @@ export default function Home({ defaultOrUserLocale, userDataForSearchWrapper, us
                 />
             </div>
 
-            {pollenData.length > 0
-                ? (
-                    <>
-                        <div>
-                            <span>{userDataForSearchArray.city}, ({userDataForSearchArray.countryName})</span>
-                        </div>
-                        <span>Current allergy risk: {pollenData[0].allergyrisk_hourly?.allergyrisk_hourly_1[getCurrentHour()]}/10</span>
-                        <ul>{pollenList}</ul>
-                    </>
-                ) : null
+            {isLoading
+                ? <Loading />
+                : pollenData.length > 0
+                    ? (
+                        <section>
+                            <div>{userDataForSearchArray.city}, ({userDataForSearchArray.countryName})</div>
+                            <div>Current allergy risk: {pollenData[0]?.allergyrisk_hourly.allergyrisk_hourly_1[getCurrentHour()]}/10</div>
+                            <ul>{pollenList}</ul>
+                        </section>
+                    )
+                    : null
             }
         </>
     )
