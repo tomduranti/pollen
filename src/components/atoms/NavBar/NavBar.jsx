@@ -10,14 +10,12 @@ export default function NavBar({ isUserSignedIn }) {
     const navigate = useNavigate();
     let location = useLocation();
 
-    const SignInOrLogOut = isUserSignedIn !== null && <button type='button' onClick={() => { signOut(auth), navigate('signup') }}>Logout</button>;
-
     return(
         <nav>
             <a href="/">Logo</a>
             {location.pathname !== '/signup' || location.pathname !== '/signin'
-            ? SignInOrLogOut
-            : null
+            ? null
+            : <button type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
             }
         </nav>
     )
