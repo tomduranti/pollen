@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from "react-router";
 
 //functions
 import { validateForm } from '../../utils/EmailAndPasswordValidation.js';
+import { writeUserData } from '../../utils/databaseReadAndWrite.js';
 import { auth } from "../../utils/firebaseConfig.js";
 import { getDatabase, ref, child, get } from 'firebase/database';
 import {
@@ -43,8 +44,10 @@ export default function AuthForm({ authMode }) {
 
                         //if there's an error, kill this block
                         if (errorMessage) return;
-                        //if there's no error, the user signed up successfully, redirect user to location
                         seterrorMessageValidation(false);
+                        //add userName to Database
+                        writeUserData('userName', credentials.userName, user.uid);
+                        //finally, redirect user to choose its location
                         if (errorMessage === false) return navigate('/location');
                     })
                     .catch(error => {
@@ -148,7 +151,14 @@ export default function AuthForm({ authMode }) {
             <div>OR</div>
 
             <form noValidate>
-                <label htmlFor="email">Email address</label>
+                {authMode === 'signup' &&
+                <>
+                    <label htmlFor="name">Name</label>
+                    <input type="text" name="name"
+                            required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, userName: e.target.value })} />
+                </>
+                     }
+                <label htmlFor="email">Email</label>
                 <input type="email" name="mail"
                     required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, email: e.target.value })} />
                 <div id="error" aria-live="polite">{errorMessageCredentials.errorEmail}</div>

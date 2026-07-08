@@ -8,11 +8,13 @@ import Location from './pages/Location/Location.jsx';
 
 //functions
 import { onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, child, get } from 'firebase/database';
 import { auth } from './utils/firebaseConfig.js';
 
 export default function App() {
   const defaultLocale = 'en';
   const [isUserSignedIn, setIsUserSignedIn] = useState();
+  const [userData, setUserData] = useState();
 
   //this is the observer that checks if the user is logged in
   useEffect(() => {
@@ -26,12 +28,26 @@ export default function App() {
     });
 
     return () => unsubscribe();
+
   }, []);
+
+  //pull all static data from user as s/he signs in and pass them as props
+  useEffect(() => {
+    if (isUserSignedIn) {
+      const getUserDataFromDataBase = async () => {
+        let arr;
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, `users/${isUserSignedIn}`));
+        if (snapshot.exists()) return arr = snapshot.val();
+      }
+      getUserDataFromDataBase().then(data => setUserData(data));
+    }
+  }, [isUserSignedIn])
 
   return (
     <BrowserRouter>
       <header>
-        <NavBar isUserSignedIn={isUserSignedIn} />
+        <NavBar userData={userData} />
       </header>
       <main>
         <Routes>

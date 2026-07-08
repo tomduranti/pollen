@@ -1,21 +1,25 @@
 //react and components
-import { useNavigate } from "react-router";
-import { useLocation } from 'react-router'
+import { useNavigate, useLocation } from "react-router";
 
 //functions
 import { signOut } from "firebase/auth";
 import { auth } from '../../../utils/firebaseConfig.js'
 
-export default function NavBar({ isUserSignedIn }) {
+export default function NavBar({ userData }) {
     const navigate = useNavigate();
     let location = useLocation();
 
-    return(
+    return (
         <nav>
             <a href="/">Logo</a>
-            {location.pathname !== '/signup' || location.pathname !== '/signin'
-            ? null
-            : <button type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
+            {location.pathname === '/signup' || location.pathname === '/signin'
+                ? null
+                : (
+                    <>
+                        {userData && <span>Hi, {userData.userName}</span>}
+                        <button type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
+                    </>
+                )
             }
         </nav>
     )

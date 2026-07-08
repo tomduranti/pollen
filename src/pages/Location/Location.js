@@ -1,4 +1,4 @@
-import { writeUserData } from '../../utils/databaseReadAndWrite.js';
+import { updateUserData } from '../../utils/databaseReadAndWrite.js';
 
 export function getLocationFromAPI(userSign, callback) {
     return (
@@ -13,7 +13,7 @@ export function getLocationFromAPI(userSign, callback) {
                 timestamp: new Date()
             }
 
-            return writeUserData(favouriteLocation, userSign)
+            return updateUserData('location', favouriteLocation, userSign)
                 .then(() => {
                     callback();
                 })

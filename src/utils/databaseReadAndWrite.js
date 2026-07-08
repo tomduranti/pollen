@@ -1,21 +1,16 @@
 import { getDatabase, ref, update, set } from "firebase/database";
-import { app, auth } from './firebaseConfig.js'
+import { app } from './firebaseConfig.js'
 
-
-
-export function updateUserInfo(objWithUpdatedInfo) {
+export function updateUserData(userKey, userValue, userId) {
     const db = getDatabase(app);
-    return update(ref(db, 'users/' + getUserUID()), objWithUpdatedInfo);
+    return update(ref(db, 'users/' + userId), {
+        [userKey]: userValue,
+    });
 }
 
-export function getUserUID() {
-    const userId = auth.currentUser;
-    return userId;
-}
-
-export function writeUserData(userData, userSign) {
+export function writeUserData(userKey, userValue, userId) {
     const db = getDatabase(app);
-    return set(ref(db, 'users/' + userSign), {
-        location: userData,
+    return set(ref(db, 'users/' + userId), {
+        [userKey]: userValue,
     });
 }
