@@ -1,40 +1,44 @@
 //react and components
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/atoms/NavBar/NavBar.jsx';
 import Home from './pages/Home/Home.jsx';
 import AuthForm from './pages/AuthForm/AuthForm.jsx';
+import Location from './pages/Location/Location.jsx';
 
 //functions
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from './utils/firebaseConfig.js';
 
 export default function App() {
   const defaultLocale = 'en';
-  const [isUserSignedIn, setIsUserSignedIn] = useState(null);
-  const [userSearch, setUserSearch] = useState({});
+  const [isUserSignedIn, setIsUserSignedIn] = useState();
 
   //this is the observer that checks if the user is logged in
-  onAuthStateChanged(getAuth(), user => {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/auth.user  
-    user && setIsUserSignedIn(user.uid);
-    !user && setIsUserSignedIn(null);
-  });
+  useEffect(() => {
+    // onAuthStateChanged returns an unsubscribe function natively
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsUserSignedIn(user.uid);
+      } else {
+        setIsUserSignedIn(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <BrowserRouter>
       <header>
-        <NavBar isUserSignedIn={isUserSignedIn}/>
+        <NavBar isUserSignedIn={isUserSignedIn} />
       </header>
       <main>
         <Routes>
-          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userDataForSearchWrapper={setUserSearch} userDataForSearchArray={userSearch} isUserSignedIn={isUserSignedIn} />} />
-          {/* Email and Password paths */}
+          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
           <Route path='signup' element={<AuthForm authMode={'signup'} />} />
           <Route path='signin' element={<AuthForm authMode={'signin'} />} />
-          {/* Providers don't have sinup/signin distinction */}
-          <Route path='signup' element={<AuthForm />} />
-          <Route path='signin' element={<AuthForm />} />
+          <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
         </Routes>
       </main>
     </BrowserRouter>

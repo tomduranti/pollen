@@ -5,11 +5,18 @@ import { NavLink, useNavigate } from "react-router";
 //functions
 import { validateForm } from '../../utils/EmailAndPasswordValidation.js';
 import { auth } from "../../utils/firebaseConfig.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import { getDatabase, ref, child, get } from 'firebase/database';
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
+    GoogleAuthProvider
+} from "firebase/auth";
 
 export default function AuthForm({ authMode }) {
     const navigate = useNavigate();
-    const authKeyword = authMode === 'signup' ? 'SignUp' : 'SignIn';
     const screenWidth = window.innerWidth;
     const GoogleProvider = new GoogleAuthProvider();
 
@@ -29,50 +36,56 @@ export default function AuthForm({ authMode }) {
             if (authMode === 'signup') {
                 //if email credentials are valid, create a user in Firebase DB
                 //if the email already exists, prompt the user to SignIn
-
                 createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
                     .then(userCredential => {
                         // Signed up
                         const user = userCredential.user;
+
+                        //if there's an error, kill this block
+                        if (errorMessage) return;
+                        //if there's no error, the user signed up successfully, redirect user to location
+                        seterrorMessageValidation(false);
+                        if (errorMessage === false) return navigate('/location');
                     })
                     .catch(error => {
                         if (error.code === "auth/email-already-in-use") errorMessage = true;
                         seterrorMessageValidation(true);
-                    })
-                    .then(() => {
-                        //if there's an error, kill this block
-                        if (errorMessage) return;
-                        //if there's no error, the user signed up successfully, redirect user to home page
-                        seterrorMessageValidation(false);
-                        if (errorMessage === false) return navigate('/');
-                    }
-                    )
+                })
             }
-
             //Signin mode with email/password
             else if (authMode === 'signin') {
                 signInWithEmailAndPassword(auth, credentials.email, credentials.password)
                     .then(userCredential => {
                         const user = userCredential.user;
-                    })
-                    .catch(error => {
-                        if (error.code === "auth/invalid-credential") errorMessage = true;
-                        seterrorMessageValidation(true);
-                    })
-                    .then(() => {
+
                         //if there's an error, kill this block
                         if (errorMessage) return;
                         //if there's no error, the user signed in successfully, redirect user to home page
                         seterrorMessageValidation(false);
-                        if (errorMessage === false) return navigate('/');
-                    }
-                    )
+                        //if user had already set a location, redirect user to home
+                        //if user signed up but then logged out, set up location first
+                        if (errorMessage === false && user) {
+                            getUserLocation(user.uid).then(isLocationAlreadySet => {
+                                isLocationAlreadySet ? navigate('/') : navigate('/location');
+                                }
+                            )
+                        }
+                    })
+                    .catch(error => {
+                        if (error.code === "auth/invalid-credential") errorMessage = true;
+                        seterrorMessageValidation(true);
+                })
             }
         }
     }
 
-    const handleClickGoogleProvider = async () => {
+    const getUserLocation = async (userUid) => {
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, `users/${userUid}/location`));
+        return snapshot.exists() ? true : false;
+    }
 
+    const handleClickGoogleProvider = async () => {
         //if mobile view
         if (screenWidth < 575) {
             await signInWithRedirect(auth, GoogleProvider);
@@ -94,11 +107,9 @@ export default function AuthForm({ authMode }) {
                     const email = error.customData.email;
                     // The AuthCredential type that was used.
                     const credential = GoogleAuthProvider.credentialFromError(error);
-
-                    if (errorCode) console.log(errorCode, errorMessage)
                 });
-
         } else {
+            //if tablet/desktop view
             signInWithPopup(auth, GoogleProvider)
                 .then((result) => {
                     // This gives you a Google Access Token. You can use it to access the Google API.
@@ -106,6 +117,16 @@ export default function AuthForm({ authMode }) {
                     const token = credential.accessToken;
                     // The signed-in user info.
                     const user = result.user;
+
+                    //after user has signed up/signed in, redicrect user to
+                    //home if the user signs in, as s/he already chose the location
+                    //location if the user signed up because s/he needs to choose a location
+                    if (user) {
+                        getUserLocation(user.uid).then(isLocationAlreadySet => {
+                            isLocationAlreadySet ? navigate('/') : navigate('/location');
+                        }
+                        )
+                    }
                 })
                 .catch((error) => {
                     // Handle Errors here.
@@ -115,12 +136,8 @@ export default function AuthForm({ authMode }) {
                     const email = error.customData.email;
                     // The AuthCredential type that was used.
                     const credential = GoogleAuthProvider.credentialFromError(error);
-
-                    if (errorCode) console.log(errorCode, errorMessage)
-                })
-                .then(() => {
-                    navigate('/');
-                });
+                }
+            )
         }
     }
 
@@ -139,7 +156,7 @@ export default function AuthForm({ authMode }) {
                 <input type="password" name="password"
                     required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, password: e.target.value })} />
                 <div id="error" aria-live="polite">{errorMessageCredentials.errorPassword}</div>
-                <button type="submit" id="submit" onClick={e => handleClickEmailAndPassword(e)}>{authKeyword}</button>
+                <button type="submit" id="submit" onClick={e => handleClickEmailAndPassword(e)}>{authMode === 'signup' ? 'SignUp' : 'SignIn'}</button>
 
                 {authMode === 'signin'
                     ? <div>Don't have an account? <NavLink to='/signup'>SignUp</NavLink></div>
