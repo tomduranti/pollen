@@ -121,6 +121,9 @@ export default function AuthForm({ authMode }) {
                     // The signed-in user info.
                     const user = result.user;
 
+                    //add userName to Database
+                    writeUserData('userName', user.displayName, user.uid);
+
                     //after user has signed up/signed in, redicrect user to
                     //home if the user signs in, as s/he already chose the location
                     //location if the user signed up because s/he needs to choose a location
