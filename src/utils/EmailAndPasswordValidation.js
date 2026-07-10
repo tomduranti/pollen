@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
 export function validateEmail(emailToValidate) {
+    /**
+     * Validates a textual input 
+     *
+     * @param {string} emailToValidate - Email input string to validate
+     * @returns {boolean} True if the email is healthy, otherwise false.
+     */
     return (
         z
             .string()
@@ -11,6 +17,12 @@ export function validateEmail(emailToValidate) {
 }
 
 export function validatePassword(passwordToValidate) {
+    /**
+     * Validates a textual input
+     *
+     * @param {string} passwordToValidate - Email input string to validate
+     * @returns {boolean} True if the email is healthy, otherwise false.
+     */
     return (
         z
             .string()
@@ -23,16 +35,26 @@ export function validatePassword(passwordToValidate) {
 }
 
 export function validateForm(email, password, arrayError, wrapperError) {
+    /**
+     * Returns errors, if any, from email and password validation. Otherwise, it return true, meaning that both email
+     * password are valid.
+     *
+     * @param {string} email - Email input string to validate
+     * @param {string} password - Password input string to validate
+     * @param {Array} arrayError - Array containing error messages
+     * @param {function(string)} wrapperError - Setter function to populate arrayError
+     * @returns {boolean} True if both email and password are healthy.
+     */
     const emailSchema = validateEmail(email);
     const passwordSchema = validatePassword(password);
 
     !emailSchema.success
-    ? wrapperError({...arrayError, errorEmail: emailSchema.error.issues[0].message})
-    : null;
+        ? wrapperError({ ...arrayError, errorEmail: emailSchema.error.issues[0].message })
+        : null;
 
     !passwordSchema.success
-    ? wrapperError({...arrayError, errorPassword: passwordSchema.error.issues[0].message})
-    : null;
+        ? wrapperError({ ...arrayError, errorPassword: passwordSchema.error.issues[0].message })
+        : null;
 
     if (emailSchema.success && passwordSchema.success) return true;
 }

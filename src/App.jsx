@@ -8,7 +8,7 @@ import Location from './pages/Location/Location.jsx';
 
 //functions
 import { onAuthStateChanged } from "firebase/auth";
-import { getDatabase, ref, child, get } from 'firebase/database';
+import { getDatabase, ref, onValue } from 'firebase/database';
 import { auth } from './utils/firebaseConfig.js';
 
 export default function App() {
@@ -16,10 +16,9 @@ export default function App() {
   const [isUserSignedIn, setIsUserSignedIn] = useState();
   const [userData, setUserData] = useState();
 
-  //this is the observer that checks if the user is logged in
+  //observer that checks if the user signed in
   useEffect(() => {
-    // onAuthStateChanged returns an unsubscribe function natively
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
         setIsUserSignedIn(user.uid);
       } else {
@@ -28,26 +27,29 @@ export default function App() {
     });
 
     return () => unsubscribe();
-
   }, []);
 
-  //pull all static data from user as s/he signs in and pass them as props
+//pull all user data from DB
   useEffect(() => {
-    if (isUserSignedIn) {
-      const getUserDataFromDataBase = async () => {
-        let arr;
-        const dbRef = ref(getDatabase());
-        const snapshot = await get(child(dbRef, `users/${isUserSignedIn}`));
-        if (snapshot.exists()) return arr = snapshot.val();
-      }
-      getUserDataFromDataBase().then(data => setUserData(data));
-    }
+    if (!isUserSignedIn) return;
+          const db = getDatabase();
+          const userRef = ref(db, `users/${isUserSignedIn}`);
+
+          const unsubscribeOnValue = onValue(userRef, snapshot => {
+            setUserData(snapshot.val());
+          });
+
+          return () => unsubscribeOnValue();
   }, [isUserSignedIn])
+
+  useEffect(() => {
+    console.log(userData)
+  }, [userData])
 
   return (
     <BrowserRouter>
       <header>
-        <NavBar userData={userData} />
+        <NavBar userName={userData} />
       </header>
       <main>
         <Routes>

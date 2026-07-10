@@ -1,4 +1,4 @@
-import { getDatabase, ref, update, set } from "firebase/database";
+import { getDatabase, ref, update, get, child, set } from "firebase/database";
 import { app } from './firebaseConfig.js'
 
 export function updateUserData(userKey, userValue, userId) {
@@ -13,4 +13,10 @@ export function writeUserData(userKey, userValue, userId) {
     return set(ref(db, 'users/' + userId), {
         [userKey]: userValue,
     });
+}
+
+export async function getUserLocation(userUid) {
+    const dbRef = ref(getDatabase());
+    const snapshot = await get(child(dbRef, `users/${userUid}/location`));
+    return snapshot.exists() ? true : false;
 }

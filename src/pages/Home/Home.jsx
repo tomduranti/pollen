@@ -6,32 +6,33 @@ import Loading from '../../components/atoms/Loading/Loading.jsx';
 //functions
 import { getPollenFromAPI } from './Home.js';
 import { getDatabase, ref, child, get } from 'firebase/database';
-import { writeUserData } from '../../utils/databaseReadAndWrite.js';
+import { updateUserData } from '../../utils/databaseReadAndWrite.js';
 import getCurrentHour from '../../utils/getCurrentHour.js';
+import getTimeDifference from '../../utils/getTimeDifference.js';
 
 export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
 
     const [pollenData, setPollenData] = useState([]);
     //filter only active pollens to display
-    const filteredPollenList = pollenData.map(item => {
-            return item.contamination?.map(subitem => {
-                //filter only relevant pollen results
-                return (subitem.contamination_1 >= 1
-                    ? (
-                        <li key={subitem.poll_id}>
-                            <span>
-                                {subitem.poll_title}: {subitem.contamination_1}
-                            </span>
-                        </li>
-                    )
-                    : null
+    const filteredPollenList = pollenData?.map(item => {
+        return item.contamination?.map(subitem => {
+            //filter only relevant pollen results
+            return (subitem.contamination_1 >= 1
+                ? (
+                    <li key={subitem.poll_id}>
+                        <span>
+                            {subitem.poll_title}: {subitem.contamination_1}
+                        </span>
+                    </li>
                 )
-            });
+                : null
+            )
         });
+    });
 
     const [userLocation, setUserLocation] = useState({
         city: '',
-        countryName: ''
+        countryName: '',
     });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -66,21 +67,70 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
         if (snapshot.exists()) return arr = snapshot.val();
     }, [isUserSignedIn])
 
-    //fetch API
+
+    const getUserDataFromDataBase = useCallback(async () => {
+        let arr;
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, `users/${isUserSignedIn}`));
+        if (snapshot.exists()) return arr = snapshot.val();
+    }, [isUserSignedIn])
+
+    //fetch Pollen API
     useEffect(() => {
         if (isUserSignedIn) {
             setIsLoading(true);
-            getUserLocation().then(data => {
-                getPollenFromAPI(defaultOrUserLocale, data, setPollenData);
-                setUserLocation((prev) => (
-                    {
-                        ...prev,
-                        city: data.city,
-                        countryName: data.countryName
-                    }))
-                setIsLoading(false);
-            })
+
+            //see if previous data are stored in DB
+            getUserDataFromDataBase().then(data => {
+
+                //if there is no previous data stored in DB, fetch and store fresh data
+                if (!data.latestPollenData) {
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData);
+                    setUserLocation(prev => (
+                        {
+                            ...prev,
+                            city: data.location.city,
+                            countryName: data.location.countryName,
+                        }))
+                    //push this data to DB as if latest timestamp <4h, this data is going to be fetched
+                    updateUserData('latestPollenData', pollenData, isUserSignedIn);
+                    setIsLoading(false);
+                    console.log("New data have been fetched")
+                    return;
+                }
+
+                //if there is previous data stored in DB
+                const now = new Date;
+                const latestTimestamp = new Date(data.location.timestamp);
+
+                //if timestamp from user DB /location is less than 4 hours ago, display stale results
+                console.log(`Data has been fetched more than 4 hours ago: ${getTimeDifference(now, latestTimestamp, 14400000)}`)
+                if (!getTimeDifference(now, latestTimestamp, 14400000)) {
+                    console.log('Fetching and showing stale data...')
+                    setPollenData(data.latestPollenData);
+                    setUserLocation(prev => (
+                        {
+                            ...prev,
+                            city: data.location.city,
+                            countryName: data.location.countryName,
+                        }))
+
+                    setIsLoading(false);
+                } else {
+                    //if timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
+                    console.log('Fetching and showing fresh data from API...')
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData);
+                    setUserLocation(prev => (
+                        {
+                            ...prev,
+                            city: data.location.city,
+                            countryName: data.location.countryName,
+                        }))
+                    setIsLoading(false);
+                }
+            });
         }
+
     }, [isUserSignedIn, getUserLocation]);
 
     if (isLoading) return <Loading />

@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router";
 import { signOut } from "firebase/auth";
 import { auth } from '../../../utils/firebaseConfig.js'
 
-export default function NavBar({ userData }) {
+export default function NavBar({ userName }) {
     const navigate = useNavigate();
     let location = useLocation();
 
@@ -16,7 +16,7 @@ export default function NavBar({ userData }) {
                 ? null
                 : (
                     <>
-                        {userData && <span>Hi, {userData.userName}</span>}
+                        {userName?.userName && <span>Hi, {userName.userName}</span>}
                         <button type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
                     </>
                 )

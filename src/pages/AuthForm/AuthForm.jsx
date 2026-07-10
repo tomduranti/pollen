@@ -4,9 +4,8 @@ import { NavLink, useNavigate } from "react-router";
 
 //functions
 import { validateForm } from '../../utils/EmailAndPasswordValidation.js';
-import { writeUserData } from '../../utils/databaseReadAndWrite.js';
+import { writeUserData, getUserLocation } from '../../utils/databaseReadAndWrite.js';
 import { auth } from "../../utils/firebaseConfig.js";
-import { getDatabase, ref, child, get } from 'firebase/database';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -80,12 +79,6 @@ export default function AuthForm({ authMode }) {
                 })
             }
         }
-    }
-
-    const getUserLocation = async (userUid) => {
-        const dbRef = ref(getDatabase());
-        const snapshot = await get(child(dbRef, `users/${userUid}/location`));
-        return snapshot.exists() ? true : false;
     }
 
     const handleClickGoogleProvider = async () => {
@@ -163,7 +156,7 @@ export default function AuthForm({ authMode }) {
                      }
                 <label htmlFor="email">Email</label>
                 <input type="email" name="mail"
-                    required aria-describedby="" aria-invalid="false" onChange={e => setCredentials({ ...credentials, email: e.target.value })} />
+                    required aria-describedby="" aria-invalid="false" required onChange={e => setCredentials({ ...credentials, email: e.target.value })} />
                 <div id="error" aria-live="polite">{errorMessageCredentials.errorEmail}</div>
                 <label htmlFor="password">Password</label>
                 <input type="password" name="password"
