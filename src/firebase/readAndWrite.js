@@ -1,10 +1,17 @@
 import { getDatabase, ref, update, get, child, set } from "firebase/database";
-import { app } from './firebaseConfig.js'
+import { app } from './config.js'
 
 export function updateUserData(userKey, userValue, userId) {
     const db = getDatabase(app);
     return update(ref(db, 'users/' + userId), {
         [userKey]: userValue,
+    });
+}
+
+export function updateLocationTimestamp(newTimestamp, userId) {
+    const db = getDatabase(app);
+    return update(ref(db, 'users/' + userId + '/location'), {
+        timestamp: newTimestamp,
     });
 }
 

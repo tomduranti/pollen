@@ -9,7 +9,7 @@ import Location from './pages/Location/Location.jsx';
 //functions
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue } from 'firebase/database';
-import { auth } from './utils/firebaseConfig.js';
+import { auth } from './firebase/config.js';
 
 export default function App() {
   const defaultLocale = 'en';
@@ -41,10 +41,6 @@ export default function App() {
 
           return () => unsubscribeOnValue();
   }, [isUserSignedIn])
-
-  useEffect(() => {
-    console.log(userData)
-  }, [userData])
 
   return (
     <BrowserRouter>

@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from "react-router";
 
 //functions
-import { validateForm } from '../../utils/EmailAndPasswordValidation.js';
-import { writeUserData, getUserLocation } from '../../utils/databaseReadAndWrite.js';
-import { auth } from "../../utils/firebaseConfig.js";
+import { validateForm } from '../../firebase/auth.js';
+import { writeUserData, getUserLocation } from '../../firebase/readAndWrite.js';
+import { auth } from "../../firebase/config.js";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,

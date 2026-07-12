@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 
 //functions
 import { signOut } from "firebase/auth";
-import { auth } from '../../../utils/firebaseConfig.js'
+import { auth } from '../../../firebase/config.js'
 
 export default function NavBar({ userName }) {
     const navigate = useNavigate();

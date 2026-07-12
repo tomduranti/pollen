@@ -1,4 +1,4 @@
-import { updateUserData } from '../../utils/databaseReadAndWrite.js';
+import { updateUserData } from '../../firebase/readAndWrite.js';
 
 export function getLocationFromAPI(userSign, callback) {
     return (
