@@ -13,7 +13,10 @@ export function getLocationFromAPI(userSign, callback) {
                 timestamp: new Date()
             }
 
-            return updateUserData('location', favouriteLocation, userSign)
+            return (
+                updateUserData('location', favouriteLocation, userSign),
+                updateUserData('latestPollenData', null, userSign)
+            )
                 .then(() => {
                     callback();
                 })
