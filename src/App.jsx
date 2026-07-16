@@ -13,46 +13,48 @@ import { auth } from './firebase/config.js';
 
 export default function App() {
   const defaultLocale = 'en';
-  const [isUserSignedIn, setIsUserSignedIn] = useState();
+  // const [isUserSignedIn, setIsUserSignedIn] = useState();
   const [userData, setUserData] = useState();
 
   //observer that checks if the user signed in
+  //also stores userdata from DB to local object
   useEffect(() => {
+    let unsubscribeOnValue;
+
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
-        setIsUserSignedIn(user.uid);
+
+        const db = getDatabase();
+        const userRef = ref(db, `users/${user.uid}`);
+
+        unsubscribeOnValue = onValue(userRef, snapshot => {
+          setUserData(prev => ({
+            ...prev,
+            userId: user.uid,
+            userPollenAndLocation: snapshot.val()
+          }));
+        });
+
       } else {
-        setIsUserSignedIn(null);
+        setUserData(null);
       }
     });
 
-    return () => unsubscribe();
+    return () => { unsubscribe(); unsubscribeOnValue?.() };
   }, []);
 
-//pull all user data from DB
-  useEffect(() => {
-    if (!isUserSignedIn) return;
-          const db = getDatabase();
-          const userRef = ref(db, `users/${isUserSignedIn}`);
-
-          const unsubscribeOnValue = onValue(userRef, snapshot => {
-            setUserData(snapshot.val());
-          });
-
-          return () => unsubscribeOnValue();
-  }, [isUserSignedIn])
 
   return (
     <BrowserRouter>
       <header>
-        <NavBar userName={userData} />
+        <NavBar userData={userData} />
       </header>
       <main>
         <Routes>
-          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
+          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userData={userData} />} />
           <Route path='signup' element={<AuthForm authMode={'signup'} />} />
           <Route path='signin' element={<AuthForm authMode={'signin'} />} />
-          <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
+          <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} userData={userData} />} />
         </Routes>
       </main>
     </BrowserRouter>
