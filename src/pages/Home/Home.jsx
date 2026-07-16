@@ -1,15 +1,16 @@
 //react and components
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import Loading from '../../components/atoms/Loading/Loading.jsx';
 
 //functions
 import { getPollenFromAPI } from './Home.js';
+import { getDatabase, ref, child, get } from 'firebase/database';
 import { updateUserData, updateLocationTimestamp } from '../../firebase/readAndWrite.js';
 import getCurrentHour from '../../utils/getCurrentHour.js';
 import getTimeDifference from '../../utils/getTimeDifference.js';
 
-export default function Home({ defaultOrUserLocale, userData }) {
+export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
 
     const [pollenData, setPollenData] = useState([]);
     //filter only active pollens to display
@@ -40,64 +41,77 @@ export default function Home({ defaultOrUserLocale, userData }) {
     // upon App.jsx intialisation, redirect user to signup/signin
     // but if you get to Home from signup/signin, you won't be redirected
     useEffect(() => {
-       if (!userData.userId) navigate('signup');
+        isUserSignedIn === null && navigate('signup');
     }, [])
 
 
+    const getUserDataFromDataBase = useCallback(async () => {
+        let arr;
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, `users/${isUserSignedIn}`));
+        if (snapshot.exists()) return arr = snapshot.val();
+    }, [isUserSignedIn])
+
     //this useEffect fetches Pollen API and fills useState
     useEffect(() => {
-        if (userData.userId) {
+        if (isUserSignedIn) {
             setIsLoading(true);
 
-            const latestTimestamp = new Date(userData.userPollenAndLocation.location.timestamp);
+            //see if previous data are stored in DB
+            getUserDataFromDataBase().then(data => {
 
-            //if there is no previous data stored in DB, fetch and store fresh data
-            if (!userData.latestPollenData) {
-                getPollenFromAPI(defaultOrUserLocale, userData.userPollenAndLocation.location, setPollenData)
-                    .then(() => {
-                        setUserLocation(prev => (
-                            {
-                                ...prev,
-                                city: userData.userPollenAndLocation.location.city,
-                                countryName: userData.userPollenAndLocation.location.countryName,
-                            }))
-                    })
-                return;
-            }
-            //if there is previous data stored in DB
-            //if timestamp from user DB /location is less than 4 hours ago, display stale results
-            else if (!getTimeDifference(now, latestTimestamp, 14400000)) {
-                setUserLocation(prev => (
-                    {
-                        ...prev,
-                        city: userData.userPollenAndLocation.location.city,
-                        countryName: userData.userPollenAndLocation.location.countryName,
-                    }))
-                updateLocationTimestamp(now, userData.userId);
-                setIsLoading(false);
-            } else {
-                    //if timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
-                    getPollenFromAPI(defaultOrUserLocale, userData.userPollenAndLocation.location, setPollenData)
+                const latestTimestamp = new Date(data.location.timestamp);
+
+                //if there is no previous data stored in DB, fetch and store fresh data
+                if (!data.latestPollenData) {
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
                         .then(() => {
                             setUserLocation(prev => (
                                 {
                                     ...prev,
-                                    city: userData.userPollenAndLocation.location.city,
-                                    countryName: userData.userPollenAndLocation.location.countryName,
+                                    city: data.location.city,
+                                    countryName: data.location.countryName,
+                                }))
+                        })
+                    return;
+                }
+                //if there is previous data stored in DB
+                //if timestamp from user DB /location is less than 4 hours ago, display stale results
+                else if (!getTimeDifference(now, latestTimestamp, 14400000)) {
+                    console.log('Fetching and showing stale data...')
+                    setUserLocation(prev => (
+                        {
+                            ...prev,
+                            city: data.location.city,
+                            countryName: data.location.countryName,
+                        }))
+                    updateLocationTimestamp(now, isUserSignedIn);
+                    setIsLoading(false);
+                } else {
+                    //if timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
+                    console.log('Fetching and showing fresh data from API...')
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
+                        .then(() => {
+                            setUserLocation(prev => (
+                                {
+                                    ...prev,
+                                    city: data.location.city,
+                                    countryName: data.location.countryName,
                                 }))
                             setIsLoading(false);
-                            updateUserData('latestPollenData', pollenData, userData.userId);
-                            updateLocationTimestamp(now, userData.userId);
+                            updateUserData('latestPollenData', pollenData, isUserSignedIn);
+                            updateLocationTimestamp(now, isUserSignedIn);
                         })
                         .catch(error => console.error(error))
                 }
-            }
-    }, [userData.userPollenAndLocation?.location?.placeId]);
+            });
+        }
+    }, [isUserSignedIn]);
 
     //this useEffect pushes data from useState to DB
     useEffect(() => {
-        updateUserData('latestPollenData', pollenData, userData.userId);
-        updateLocationTimestamp(now, userData.userId);
+        updateUserData('latestPollenData', pollenData, isUserSignedIn);
+        updateLocationTimestamp(now, isUserSignedIn);
         setIsLoading(false);
     }, [pollenData])
 
