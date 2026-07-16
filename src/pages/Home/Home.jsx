@@ -1,12 +1,11 @@
 //react and components
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
-import Loading from '../../components/atoms/Loading/Loading.jsx';
+import Loading from '../../components/Loading/Loading.jsx';
 
 //functions
-import { getPollenFromAPI } from './Home.js';
-import { getDatabase, ref, child, get } from 'firebase/database';
-import { updateUserData, updateLocationTimestamp } from '../../firebase/readAndWrite.js';
+import { getPollenFromAPI } from './usePollenApi.js';
+import { updateUserData, updateLocationTimestamp, getUserDataFromDataBase } from '../../firebase/readAndWrite.js';
 import getCurrentHour from '../../utils/getCurrentHour.js';
 import getTimeDifference from '../../utils/getTimeDifference.js';
 
@@ -30,36 +29,22 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
         });
     });
 
-    const [userLocation, setUserLocation] = useState({
-        city: '',
-        countryName: '',
-    });
+    const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const now = new Date;
 
-    // upon App.jsx intialisation, redirect user to signup/signin
-    // but if you get to Home from signup/signin, you won't be redirected
+    //isUserSignedIn has 3 conditions: 1) undefined, when the auth is checking the value,
+    //2) null, the user succesfully signed out, 3) String, the user succesfully signed up/in
     useEffect(() => {
-        isUserSignedIn === null && navigate('signup');
-    }, [])
+        //2) null, the user succesfully signed out
+        if (isUserSignedIn === null) navigate('signup');
 
-
-    const getUserDataFromDataBase = useCallback(async () => {
-        let arr;
-        const dbRef = ref(getDatabase());
-        const snapshot = await get(child(dbRef, `users/${isUserSignedIn}`));
-        if (snapshot.exists()) return arr = snapshot.val();
-    }, [isUserSignedIn])
-
-    //this useEffect fetches Pollen API and fills useState
-    useEffect(() => {
+        //3) String, the user succesfully signed up/in
         if (isUserSignedIn) {
             setIsLoading(true);
-
             //see if previous data are stored in DB
-            getUserDataFromDataBase().then(data => {
-
+            getUserDataFromDataBase(isUserSignedIn).then(data => {
                 const latestTimestamp = new Date(data.location.timestamp);
 
                 //if there is no previous data stored in DB, fetch and store fresh data
@@ -75,10 +60,9 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
                         })
                     return;
                 }
-                //if there is previous data stored in DB
-                //if timestamp from user DB /location is less than 4 hours ago, display stale results
+                //if there is previous data stored in DB, and:
+                //i) timestamp from user DB /location is less than 4 hours ago, display stale results
                 else if (!getTimeDifference(now, latestTimestamp, 14400000)) {
-                    console.log('Fetching and showing stale data...')
                     setUserLocation(prev => (
                         {
                             ...prev,
@@ -88,8 +72,7 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
                     updateLocationTimestamp(now, isUserSignedIn);
                     setIsLoading(false);
                 } else {
-                    //if timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
-                    console.log('Fetching and showing fresh data from API...')
+                    //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
                     getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
                         .then(() => {
                             setUserLocation(prev => (
@@ -110,12 +93,16 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
 
     //this useEffect pushes data from useState to DB
     useEffect(() => {
+        if (!isUserSignedIn) return;
         updateUserData('latestPollenData', pollenData, isUserSignedIn);
         updateLocationTimestamp(now, isUserSignedIn);
         setIsLoading(false);
-    }, [pollenData])
+    }, [pollenData, isUserSignedIn])
 
+    // 1) isUserSignedIn is undefined: auth is checking the value
+    if (isUserSignedIn === undefined) return <Loading />;
 
+    //Loading spin that waits for data to be ready
     if (isLoading) return <Loading />
 
     return (

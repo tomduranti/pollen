@@ -1,7 +1,7 @@
 //react and components
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from 'react-router';
-import NavBar from './components/atoms/NavBar/NavBar.jsx';
+import NavBar from './components/NavBar/NavBar.jsx';
 import Home from './pages/Home/Home.jsx';
 import AuthForm from './pages/AuthForm/AuthForm.jsx';
 import Location from './pages/Location/Location.jsx';
@@ -42,10 +42,11 @@ export default function App() {
           return () => unsubscribeOnValue();
   }, [isUserSignedIn])
 
+
   return (
     <BrowserRouter>
       <header>
-        <NavBar userName={userData} />
+        <NavBar isUserSignedIn={isUserSignedIn} />
       </header>
       <main>
         <Routes>
