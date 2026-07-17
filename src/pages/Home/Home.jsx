@@ -1,17 +1,17 @@
 //react and components
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useState } from 'react';
+import usePollenSync from './usePollenSync.js';
+import { Link } from 'react-router';
 import Loading from '../../components/Loading/Loading.jsx';
 
 //functions
-import { getPollenFromAPI } from './usePollenApi.js';
-import { updateUserPollen, updateUserLocationTimestamp, getUserDataFromDataBase } from '../../firebase/readAndWrite.js';
 import getCurrentHour from '../../utils/getCurrentHour.js';
-import getTimeDifference from '../../utils/getTimeDifference.js';
 
 export default function Home({ defaultOrUserLocale, userId }) {
 
     const [pollenData, setPollenData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });    
     //filter only active pollens to display
     const filteredPollenList = pollenData?.map(item => {
         return item.contamination?.map(subitem => {
@@ -29,82 +29,9 @@ export default function Home({ defaultOrUserLocale, userId }) {
         });
     });
 
-    const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
-    const now = new Date;
-
-    //userId has 3 conditions: 1) undefined, when the auth is checking the value,
-    //2) null, the user succesfully signed out, 3) String, the user succesfully signed up/in
-    useEffect(() => {
-        //2) null, the user succesfully signed out
-        if (userId === null) navigate('signup');
-
-        //3) String, the user succesfully signed up/in
-        if (userId) {
-            setIsLoading(true);
-            //see if previous data are stored in DB
-            getUserDataFromDataBase(userId).then(data => {
-                const latestTimestamp = new Date(data.location.timestamp);
-
-                //if there is no previous data stored in DB, fetch and store fresh data
-                if (!data.latestPollenData) {
-                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
-                        .then(() => {
-                            setUserLocation(prev => (
-                                {
-                                    ...prev,
-                                    city: data.location.city,
-                                    countryName: data.location.countryName,
-                                }))
-                        })
-                    return;
-                }
-                //if there is previous data stored in DB, and:
-                //i) timestamp from user DB /location is less than 4 hours ago, display stale results
-                else if (!getTimeDifference(now, latestTimestamp, 14400000)) {
-                    setUserLocation(prev => (
-                        {
-                            ...prev,
-                            city: data.location.city,
-                            countryName: data.location.countryName,
-                        }))
-                    updateUserLocationTimestamp(now, userId);
-                    setIsLoading(false);
-                } else {
-                    //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
-                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
-                        .then(() => {
-                            setUserLocation(prev => (
-                                {
-                                    ...prev,
-                                    city: data.location.city,
-                                    countryName: data.location.countryName,
-                                }))
-                            setIsLoading(false);
-                            updateUserPollen(pollenData, userId);
-                            updateUserLocationTimestamp(now, userId);
-                        })
-                        .catch(error => console.error(error))
-                }
-            });
-        }
-
-    }, [userId]);
-
-    //this useEffect pushes data from useState to DB
-    useEffect(() => {
-        if (!userId) return;
-        updateUserPollen(pollenData, userId);
-        updateUserLocationTimestamp(now, userId);
-        setIsLoading(false);
-    }, [pollenData, userId])
-
-    // 1) userId is undefined: auth is checking the value
-    if (userId === undefined) return <Loading />;
-
-    //Loading spin that waits for data to be ready
-    if (isLoading) return <Loading />
+    usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setIsLoading, setUserLocation);
+    // 1) if userId is undefined: auth is checking the value, showing a loading state
+    if (userId === undefined || isLoading) return <Loading />;
 
     return (
         <>
