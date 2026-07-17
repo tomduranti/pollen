@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router";
 
 //functions
 import { validateForm } from '../../firebase/auth.js';
-import { writeUserData, getUserLocation } from '../../firebase/readAndWrite.js';
+import { writeUserCredentials, getUserLocation } from '../../firebase/readAndWrite.js';
 import { auth } from "../../firebase/config.js";
 import {
     createUserWithEmailAndPassword,
@@ -45,7 +45,7 @@ export default function AuthForm({ authMode }) {
                         if (errorMessage) return;
                         seterrorMessageValidation(false);
                         //add userName to Database
-                        writeUserData('userName', credentials.userName, user.uid);
+                        writeUserCredentials('userName', credentials.userName, user.uid);
                         //finally, redirect user to choose its location
                         if (errorMessage === false) return navigate('/location');
                     })
@@ -115,7 +115,7 @@ export default function AuthForm({ authMode }) {
                     const user = result.user;
 
                     //add userName to Database
-                    writeUserData('userName', user.displayName, user.uid);
+                    writeUserCredentials('userName', user.displayName, user.uid);
 
                     //after user has signed up/signed in, redicrect user to
                     //home if the user signs in, as s/he already chose the location

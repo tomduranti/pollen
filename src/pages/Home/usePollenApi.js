@@ -8,7 +8,7 @@ export async function getPollenFromAPI(locale, array, wrapper) {
 
         return await response.json()
         //stores the result in an array
-        .then(response => wrapper([response]));
+        .then(response => {wrapper([response])});
 
     } catch (error) {
         console.error(error.message);

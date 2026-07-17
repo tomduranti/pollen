@@ -8,52 +8,36 @@ import Location from './pages/Location/Location.jsx';
 
 //functions
 import { onAuthStateChanged } from "firebase/auth";
-import { getDatabase, ref, onValue } from 'firebase/database';
 import { auth } from './firebase/config.js';
 
 export default function App() {
   const defaultLocale = 'en';
-  const [isUserSignedIn, setIsUserSignedIn] = useState();
-  const [userData, setUserData] = useState();
+  const [userId, setUserId] = useState();
 
   //observer that checks if the user signed in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
-        setIsUserSignedIn(user.uid);
+        setUserId(user.uid);
       } else {
-        setIsUserSignedIn(null);
+        setUserId(null);
       }
     });
 
     return () => unsubscribe();
   }, []);
 
-//pull all user data from DB
-  useEffect(() => {
-    if (!isUserSignedIn) return;
-          const db = getDatabase();
-          const userRef = ref(db, `users/${isUserSignedIn}`);
-
-          const unsubscribeOnValue = onValue(userRef, snapshot => {
-            setUserData(snapshot.val());
-          });
-
-          return () => unsubscribeOnValue();
-  }, [isUserSignedIn])
-
-
   return (
     <BrowserRouter>
       <header>
-        <NavBar isUserSignedIn={isUserSignedIn} />
+        <NavBar userId={userId} />
       </header>
       <main>
         <Routes>
-          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
+          <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userId={userId} />} />
           <Route path='signup' element={<AuthForm authMode={'signup'} />} />
           <Route path='signin' element={<AuthForm authMode={'signin'} />} />
-          <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} isUserSignedIn={isUserSignedIn} />} />
+          <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} userId={userId} />} />
         </Routes>
       </main>
     </BrowserRouter>

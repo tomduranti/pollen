@@ -7,13 +7,13 @@ import { signOut } from "firebase/auth";
 import { auth } from '../../firebase/config.js'
 import { getUserName } from '../../firebase/readAndWrite.js'
 
-export default function NavBar({ isUserSignedIn }) {
+export default function NavBar({ userId }) {
     const navigate = useNavigate();
     let location = useLocation();
     const [userName, setUserName] = useState('');
 
-    if (isUserSignedIn) {
-        getUserName(isUserSignedIn).then(data => {
+    if (userId) {
+        getUserName(userId).then(data => {
             return setUserName(data);
         })
     }

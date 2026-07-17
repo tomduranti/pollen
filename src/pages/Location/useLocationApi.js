@@ -1,4 +1,4 @@
-import { updateUserData } from '../../firebase/readAndWrite.js';
+import { updateUserPollen, updateUserLocation } from '../../firebase/readAndWrite.js';
 
 export function getLocationFromAPI(userSign, callback) {
     return (
@@ -14,8 +14,8 @@ export function getLocationFromAPI(userSign, callback) {
             }
 
             return (
-                updateUserData('location', favouriteLocation, userSign),
-                updateUserData('latestPollenData', null, userSign)
+                updateUserLocation(favouriteLocation, userSign),
+                updateUserPollen(null, userSign)
             )
                 .then(() => {
                     callback();

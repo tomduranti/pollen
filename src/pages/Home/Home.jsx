@@ -5,11 +5,11 @@ import Loading from '../../components/Loading/Loading.jsx';
 
 //functions
 import { getPollenFromAPI } from './usePollenApi.js';
-import { updateUserData, updateLocationTimestamp, getUserDataFromDataBase } from '../../firebase/readAndWrite.js';
+import { updateUserPollen, updateUserLocationTimestamp, getUserDataFromDataBase } from '../../firebase/readAndWrite.js';
 import getCurrentHour from '../../utils/getCurrentHour.js';
 import getTimeDifference from '../../utils/getTimeDifference.js';
 
-export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
+export default function Home({ defaultOrUserLocale, userId }) {
 
     const [pollenData, setPollenData] = useState([]);
     //filter only active pollens to display
@@ -34,17 +34,17 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
     const navigate = useNavigate();
     const now = new Date;
 
-    //isUserSignedIn has 3 conditions: 1) undefined, when the auth is checking the value,
+    //userId has 3 conditions: 1) undefined, when the auth is checking the value,
     //2) null, the user succesfully signed out, 3) String, the user succesfully signed up/in
     useEffect(() => {
         //2) null, the user succesfully signed out
-        if (isUserSignedIn === null) navigate('signup');
+        if (userId === null) navigate('signup');
 
         //3) String, the user succesfully signed up/in
-        if (isUserSignedIn) {
+        if (userId) {
             setIsLoading(true);
             //see if previous data are stored in DB
-            getUserDataFromDataBase(isUserSignedIn).then(data => {
+            getUserDataFromDataBase(userId).then(data => {
                 const latestTimestamp = new Date(data.location.timestamp);
 
                 //if there is no previous data stored in DB, fetch and store fresh data
@@ -69,7 +69,7 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
                             city: data.location.city,
                             countryName: data.location.countryName,
                         }))
-                    updateLocationTimestamp(now, isUserSignedIn);
+                    updateUserLocationTimestamp(now, userId);
                     setIsLoading(false);
                 } else {
                     //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
@@ -82,25 +82,26 @@ export default function Home({ defaultOrUserLocale, isUserSignedIn }) {
                                     countryName: data.location.countryName,
                                 }))
                             setIsLoading(false);
-                            updateUserData('latestPollenData', pollenData, isUserSignedIn);
-                            updateLocationTimestamp(now, isUserSignedIn);
+                            updateUserPollen(pollenData, userId);
+                            updateUserLocationTimestamp(now, userId);
                         })
                         .catch(error => console.error(error))
                 }
             });
         }
-    }, [isUserSignedIn]);
+
+    }, [userId]);
 
     //this useEffect pushes data from useState to DB
     useEffect(() => {
-        if (!isUserSignedIn) return;
-        updateUserData('latestPollenData', pollenData, isUserSignedIn);
-        updateLocationTimestamp(now, isUserSignedIn);
+        if (!userId) return;
+        updateUserPollen(pollenData, userId);
+        updateUserLocationTimestamp(now, userId);
         setIsLoading(false);
-    }, [pollenData, isUserSignedIn])
+    }, [pollenData, userId])
 
-    // 1) isUserSignedIn is undefined: auth is checking the value
-    if (isUserSignedIn === undefined) return <Loading />;
+    // 1) userId is undefined: auth is checking the value
+    if (userId === undefined) return <Loading />;
 
     //Loading spin that waits for data to be ready
     if (isLoading) return <Loading />
