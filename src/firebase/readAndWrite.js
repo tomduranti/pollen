@@ -2,7 +2,7 @@ import { getDatabase, ref, update, get, child, set } from "firebase/database";
 import { app } from './config.js'
 
 //* READ */
-export async function getUserLocation(userId) {
+export async function isUserLocationSet(userId) {
     const dbRef = ref(getDatabase());
     const snapshot = await get(child(dbRef, `users/${userId}/location`));
     return snapshot.exists() ? true : false;

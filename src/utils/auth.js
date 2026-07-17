@@ -5,7 +5,7 @@ export function validateEmail(emailToValidate) {
      * Validates a textual input 
      *
      * @param {string} emailToValidate - Email input string to validate
-     * @returns {boolean} True if the email is healthy, otherwise false.
+     * @returns {Object} success if the email is healthy, otherwise error.
      */
     return (
         z
@@ -21,7 +21,7 @@ export function validatePassword(passwordToValidate) {
      * Validates a textual input
      *
      * @param {string} passwordToValidate - Email input string to validate
-     * @returns {boolean} True if the email is healthy, otherwise false.
+     * @returns {Object} success if the email is healthy, otherwise error.
      */
     return (
         z

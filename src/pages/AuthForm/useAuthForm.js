@@ -2,8 +2,8 @@
 import { useNavigate } from "react-router";
 
 //functions
-import { validateForm } from '../../firebase/auth.js';
-import { writeUserCredentials, getUserLocation } from '../../firebase/readAndWrite.js';
+import { validateForm } from '../../utils/auth.js';
+import { writeUserCredentials, isUserLocationSet } from '../../firebase/readAndWrite.js';
 import { auth } from "../../firebase/config.js";
 import {
     createUserWithEmailAndPassword,
@@ -62,7 +62,7 @@ export function useEmailAndPassword(credentials, errorMessageCredentials, setErr
                         //if user had already set a location, redirect user to home
                         //if user signed up but then logged out, set up location first
                         if (errorMessage === false && user) {
-                            getUserLocation(user.uid).then(isLocationAlreadySet => {
+                            isUserLocationSet(user.uid).then(isLocationAlreadySet => {
                                 isLocationAlreadySet ? navigate('/') : navigate('/location');
                             }
                             )
@@ -124,7 +124,7 @@ export function useGoogleProvider() {
                     //home if the user signs in, as s/he already chose the location
                     //location if the user signed up because s/he needs to choose a location
                     if (user) {
-                        getUserLocation(user.uid).then(isLocationAlreadySet => {
+                        isUserLocationSet(user.uid).then(isLocationAlreadySet => {
                             isLocationAlreadySet ? navigate('/') : navigate('/location');
                         }
                         )
