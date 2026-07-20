@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap');
+@import "tailwindcss";
+
+/*FONT*/
+.body {
+  font-family: Inter, sans-serif;
+}
+
+/*BUTTONS*/
+@layer components {
+  .cta {
+    border-radius: 30px;
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: center;
+    inline-size: 100%;
+
+    cursor: pointer;
+  }
+
+  .input-field {
+    padding-block: 0.469rem;
+  }
+
+  .button {
+    padding-block: .75rem;
+    background-color: var(--color-background);
+
+    cursor: pointer;
+  }
+
+.button:hover {
+  background-color: var(--color-background-alt);
+}
+
+  .error {
+    color: red;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+}
+
+/*COLORS*/
+@theme {
+  --color-primary: #2E7D57;
+  --color-text: #12171F;
+  --color-text-secondary: #6B7280;
+  --color-border: #E3E8ED;
+  --color-background: #FFFFFF;
+  --color-background-alt: #F3F4F6;
+  --color-error: #DC2626;
+  --color-success: #16A34A;
+}
