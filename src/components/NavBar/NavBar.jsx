@@ -22,18 +22,16 @@ export default function NavBar({ userId }) {
     }
     
     return (
-        <nav className='flex justify-between items-center'>
-            <div className='flex gap-2 items-center'>
-                <a href='/' >
+        <nav className='flex justify-between items-center pbe-5 max-h-[2.75rem]'>
+            <a className='flex gap-2 items-center' href='/'>
                     <img src={logo} alt="logo" />
-                </a>
                 <h1 className='text-base font-semibold'>Pollen</h1>
-            </div>
+            </a>
             {location.pathname === '/signup' || location.pathname === '/signin'
                 ? null
                 : (
-                    <div className='flex justify-between max-w-44 w-full items-center'>
-                        {userName && <span className='capitalize truncate text-sm text-(--color-text-secondary) font-normal'>hi, {userName}</span>}
+                    <div className='flex gap-3 max-w-44 w-full items-center'>
+                        {userName && <span className='capitalize truncate text-[.813rem] text-(--color-text-secondary) font-normal'>hi, {userName}</span>}
                         <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
                     </div>
                 )

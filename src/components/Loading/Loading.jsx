@@ -2,13 +2,10 @@
 import { MoonLoader } from "react-spinners";
 
 export default function Loading() {
-    const isLoading = true;
-    const color = 'black';
-
     const override = {
         display: "block",
-        marginInline: "auto",
+        margin: "0 auto",
     };
 
-    return <MoonLoader color={color} loading={isLoading} cssOverride={override} size={30} aria-label="Loading Spinner" data-testid="loader" />
+    return <MoonLoader color={'#2E7D57'} cssOverride={override} size={30} aria-label="Loading Spinner" data-testid="loader" />
 }

@@ -26,11 +26,11 @@ export default function Location({ defaultOrUserLocale, userId }) {
             }
             .SuggestionName {
                 color: #12171F;
-                font-size: 1rem;
+                font-size: 0.875rem;
             }
             .SuggestionDesc {
                 color: #6B7280;
-                font-size: 1rem;
+                font-size: 0.875rem;
             }
           `,
                 variables: {

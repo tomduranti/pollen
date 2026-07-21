@@ -15,64 +15,69 @@ import {
 } from "firebase/auth";
 
 
-export function useEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, seterrorMessageValidation) {
+export function useEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, setErrorMessageValidation, setIsLoading) {
 
     const navigate = useNavigate();
 
-    return (event) => {
+    return event => {
         event.preventDefault();
 
         //validating email and password
         let isFormValid = validateForm(credentials.email, credentials.password, errorMessageCredentials, setErrorMessageCredentials);
         let errorMessage = false;
-        //creating/loggin in user
-        if (isFormValid) {
-            //Signup mode with email/password
-            if (authMode === 'signup') {
-                //if email credentials are valid, create a user in Firebase DB
-                //if the email already exists, prompt the user to SignIn
-                createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
-                    .then(userCredential => {
-                        // Signed up
-                        const user = userCredential.user;
 
-                        //if there's an error, kill this block
-                        if (errorMessage) return;
-                        seterrorMessageValidation(false);
-                        //add userName to Database
-                        writeUserCredentials('userName', credentials.userName, user.uid);
-                        //finally, redirect user to choose its location
-                        if (errorMessage === false) return navigate('/location');
-                    })
-                    .catch(error => {
-                        if (error.code === "auth/email-already-in-use") errorMessage = true;
-                        seterrorMessageValidation(true);
-                    })
-            }
-            //Signin mode with email/password
-            else if (authMode === 'signin') {
-                signInWithEmailAndPassword(auth, credentials.email, credentials.password)
-                    .then(userCredential => {
-                        const user = userCredential.user;
+        if (!isFormValid) return;
 
-                        //if there's an error, kill this block
-                        if (errorMessage) return;
-                        //if there's no error, the user signed in successfully, redirect user to home page
-                        seterrorMessageValidation(false);
-                        //if user had already set a location, redirect user to home
-                        //if user signed up but then logged out, set up location first
-                        if (errorMessage === false && user) {
-                            isUserLocationSet(user.uid).then(isLocationAlreadySet => {
-                                isLocationAlreadySet ? navigate('/') : navigate('/location');
-                            }
-                            )
+        //start loading spin which will stop if there's any error message from DB
+        setIsLoading(true);
+
+        //Signup mode with email/password
+        if (authMode === 'signup') {
+            //if email credentials are valid, create a user in Firebase DB
+            //if the email already exists, prompt the user to SignIn
+            createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
+                .then(userCredential => {
+                    // Signed up
+                    const user = userCredential.user;
+
+                    //if there's an error, kill this block
+                    if (errorMessage) return;
+                    setErrorMessageValidation(false);
+                    //add userName to Database
+                    writeUserCredentials('userName', credentials.userName, user.uid);
+                    //finally, redirect user to choose its location
+                    if (errorMessage === false) return navigate('/location');
+                })
+                .catch(error => {
+                    if (error.code === "auth/email-already-in-use") errorMessage = true;
+                    setErrorMessageValidation(true);
+                    setIsLoading(false);
+                })
+        }
+        //Signin mode with email/password
+        else if (authMode === 'signin') {
+            signInWithEmailAndPassword(auth, credentials.email, credentials.password)
+                .then(userCredential => {
+                    const user = userCredential.user;
+
+                    //if there's an error, kill this block
+                    if (errorMessage) return;
+                    //if there's no error, the user signed in successfully, redirect user to home page
+                    setErrorMessageValidation(false);
+                    //if user had already set a location, redirect user to home
+                    //if user signed up but then logged out, set up location first
+                    if (errorMessage === false && user) {
+                        isUserLocationSet(user.uid).then(isLocationAlreadySet => {
+                            isLocationAlreadySet ? navigate('/') : navigate('/location');
                         }
-                    })
-                    .catch(error => {
-                        if (error.code === "auth/invalid-credential") errorMessage = true;
-                        seterrorMessageValidation(true);
-                    })
-            }
+                        )
+                    }
+                })
+                .catch(error => {
+                    if (error.code === "auth/invalid-credential") errorMessage = true;
+                    setErrorMessageValidation(true);
+                    setIsLoading(false);
+                })
         }
     }
 }
