@@ -19,8 +19,8 @@ export default function AuthForm({ authMode }) {
     const handleClickGoogleProvider = useGoogleProvider();
 
     return (
-        <section className='flex flex-col gap-5'>
-            <h2 className='text-[1.375rem] font-semibold'>{authMode === 'signup' ? 'Create an account' : 'Sign in to your account'}</h2>
+        <section className='flex flex-col gap-5 md:place-self-center md:max-w-sm md:w-full md:border md:border-solid md:rounded-2xl md:border-transparent md:px-8 md:py-5 md:shadow-[0px_7px_29px_0px_rgba(100,100,111,0.2)]'>
+            <h2 className='text-[1.375rem] font-semibold'>{authMode === 'signup' ? 'Create your account' : 'Sign in to your account'}</h2>
 
             <button type='button' onClick={handleClickGoogleProvider} className='flex gap-1 cta button border-(--color-border) text-[0.938rem] font-semibold'>
                 <img src={googlelogo} alt='' />

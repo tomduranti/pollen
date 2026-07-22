@@ -32,7 +32,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className='flex flex-col gap-5 w-full max-w-[88.2%] mbs-8 mx-auto'>
+      <div className='flex flex-col place-self-center gap-5 w-full max-w-[88.2%] mbs-3'>
         <header>
           <NavBar userId={userId} />
         </header>

@@ -48,7 +48,6 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
                             countryName: data.location.countryName,
                         }))
                     updateUserLocationTimestamp(now, userId);
-                    setIsLoading(false);
                 } else {
                     //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
                     getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
@@ -59,7 +58,6 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
                                     city: data.location.city,
                                     countryName: data.location.countryName,
                                 }))
-                            setIsLoading(false);
                             updateUserPollen(pollenData, userId);
                             updateUserLocationTimestamp(now, userId);
                         })
@@ -76,5 +74,5 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
         updateUserPollen(pollenData, userId);
         updateUserLocationTimestamp(now, userId);
         setIsLoading(false);
-    }, [pollenData, userId])
+    }, [pollenData])
 }

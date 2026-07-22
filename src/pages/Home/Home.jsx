@@ -14,8 +14,13 @@ import 'react-circular-progressbar/dist/styles.css';
 export default function Home({ defaultOrUserLocale, userId }) {
 
     const [pollenData, setPollenData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });    
+    const [isLoading, setIsLoading] = useState();
+    const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });
+ 
+    usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setIsLoading, setUserLocation);
+
+    // 1) if userId is undefined: auth is checking the value, showing a loading state
+    if (userId === undefined || isLoading) return <LoaderCircle className="animate-spin m-auto" color="#2E7D57E6" size={42} />;
     //filter only active pollens to display
     const filteredPollenList = pollenData?.map(item => {
         return item.contamination?.map(subitem => {
@@ -39,15 +44,11 @@ export default function Home({ defaultOrUserLocale, userId }) {
 
     const activePollen = filteredPollenList[0]?.filter(item => item !== null).length;
 
-    usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setIsLoading, setUserLocation);
-    // 1) if userId is undefined: auth is checking the value, showing a loading state
-    if (userId === undefined || isLoading) return <LoaderCircle className="animate-spin m-auto" color="#2E7D57E6" size={42} />;
-
     return (
         <>
             {pollenData?.length > 0
                 ? (
-                    <section className='flex flex-col gap-5'>
+                    <section className='flex flex-col gap-5 md:place-self-center md:max-w-lg md:w-full'>
                         <Link to='/location' className='flex gap-1.5'>
                             <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 21C15.5 17.4 19 14.1764 19 10.2C19 6.22355 15.866 3 12 3C8.13401 3 5 6.22355 5 10.2C5 14.1764 8.5 17.4 12 21Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -95,7 +96,7 @@ export default function Home({ defaultOrUserLocale, userId }) {
                         </div>
 
                         <h2 className='text-[0.938rem] font-semibold'>{activePollen}/20 active {activePollen === 1 ? 'pollen' : 'pollens'}</h2>
-                        <ul className='flex flex-col gap-3'>{filteredPollenList}</ul>
+                        <ul className='flex flex-col gap-3 md:place-self-start md:w-[80%]'>{filteredPollenList}</ul>
                     </section>
                 )
                 : null
