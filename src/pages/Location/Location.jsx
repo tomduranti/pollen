@@ -1,5 +1,5 @@
 //react and components
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 import { SearchBox } from '@mapbox/search-js-react';
 import { getLocationFromAPI } from './useLocationApi.js';
 
@@ -8,7 +8,7 @@ export default function Location({ defaultOrUserLocale, userId }) {
     const navigate = useNavigate();
 
     return (
-        <section className='md:place-self-center md:max-w-lg md:w-full'>
+        <section className='md:mx-auto md:max-w-lg md:w-full'>
             <SearchBox
                 theme={{
                     cssText: `

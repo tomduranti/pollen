@@ -18,6 +18,16 @@
     cursor: pointer;
   }
 
+  .cta:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-text);
+  }
+
+  .safari:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-text);
+  }
+
   .input-field {
     padding-block: 0.469rem;
   }

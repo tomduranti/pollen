@@ -22,8 +22,8 @@ export default function NavBar({ userId }) {
     }
     
     return (
-        <nav className='flex justify-between items-center pbe-5 max-h-[2.75rem]'>
-            <a className='flex gap-2 items-center' href='/'>
+        <nav className='flex justify-between items-center pbe-5 max-h-11'>
+            <a className='flex gap-2 items-center' href={location.pathname === '/signup' && '/signup' || location.pathname === '/signin' && '/signin'|| location.pathname === '/' && '/'}>
                     <img src={logo} alt="logo" />
                 <h1 className='text-base font-semibold'>Pollen</h1>
             </a>

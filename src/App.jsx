@@ -1,5 +1,5 @@
 //react and components
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/NavBar/NavBar.jsx';
 import Home from './pages/Home/Home.jsx';
@@ -10,7 +10,7 @@ import Location from './pages/Location/Location.jsx';
 import './App.css';
 
 //functions
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/config.js';
 
 export default function App() {
@@ -32,7 +32,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className='flex flex-col place-self-center gap-5 w-full max-w-[88.2%] mbs-3'>
+      <div className='flex flex-col mx-auto gap-5 w-full max-w-[88.2%] mbs-3'>
         <header>
           <NavBar userId={userId} />
         </header>
