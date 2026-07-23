@@ -1,4 +1,4 @@
-export async function getPollenFromAPI(locale, array, wrapper) {
+export async function getPollenFromAPI(locale, array, wrapper, setError) {
     const url = `https://www.polleninformation.at/api/forecast/public?country=${array.countryCode}&lang=${locale}&latitude=${array.latitude}&longitude=${array.longitude}&apikey=${import.meta.env.VITE_POLLEN_API_KEY}`;
     try {
         const response = await fetch(url);
@@ -8,9 +8,11 @@ export async function getPollenFromAPI(locale, array, wrapper) {
 
         return await response.json()
         //stores the result in an array
-        .then(response => {wrapper([response])});
-
+        .then(response => {
+            wrapper([response]);
+            setError('');
+        })
     } catch (error) {
-        console.error(error.message);
+        if (error) setError(error.message);
     }
 }

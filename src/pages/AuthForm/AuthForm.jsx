@@ -16,7 +16,7 @@ export default function AuthForm({ authMode }) {
     const [errorMessageValidation, setErrorMessageValidation] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const handleClickEmailAndPassword = useEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, setErrorMessageValidation, setIsLoading);
-    const handleClickGoogleProvider = useGoogleProvider();
+    const handleClickGoogleProvider = useGoogleProvider(authMode);
 
     return (
         <section className='flex flex-col gap-5 md:mx-auto md:max-w-sm md:w-full md:border md:border-solid md:rounded-2xl md:border-transparent md:px-8 md:py-5 md:shadow-[0px_7px_29px_0px_rgba(100,100,111,0.2)]'>

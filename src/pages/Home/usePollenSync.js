@@ -7,7 +7,7 @@ import { getPollenFromAPI } from './usePollenApi.js';
 import { updateUserPollen, updateUserLocationTimestamp, getUserDataFromDataBase } from '../../firebase/readAndWrite.js';
 import getTimeDifference from '../../utils/getTimeDifference.js';
 
-export default function usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setIsLoading, setUserLocation) {
+export default function usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setUserLocation, setError) {
 
     const navigate = useNavigate();
     const now = new Date;
@@ -16,18 +16,18 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
     //2) null, the user succesfully signed out, 3) String, the user succesfully signed up/in
     useEffect(() => {
         //2) null, the user succesfully signed out
-        if (userId === null) navigate('signup');
+        if (userId === null) navigate('/signup');
 
         //3) String, the user succesfully signed up/in
         if (userId) {
-            setIsLoading(true);
+
             //see if previous data are stored in DB
             getUserDataFromDataBase(userId).then(data => {
                 const latestTimestamp = new Date(data.location.timestamp);
 
                 //if there is no previous data stored in DB, fetch and store fresh data
-                if (!data.latestPollenData) {
-                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
+                if (!data.pollen) {
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData, setError)
                         .then(() => {
                             setUserLocation(prev => (
                                 {
@@ -47,10 +47,11 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
                             city: data.location.city,
                             countryName: data.location.countryName,
                         }))
+                    setPollenData(data.pollen);
                     updateUserLocationTimestamp(now, userId);
                 } else {
                     //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
-                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData)
+                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData, setError)
                         .then(() => {
                             setUserLocation(prev => (
                                 {
@@ -58,8 +59,6 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
                                     city: data.location.city,
                                     countryName: data.location.countryName,
                                 }))
-                            updateUserPollen(pollenData, userId);
-                            updateUserLocationTimestamp(now, userId);
                         })
                         .catch(error => console.error(error))
                 }
@@ -70,9 +69,11 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
 
     //this useEffect pushes data from useState to DB
     useEffect(() => {
-        if (!userId) return;
+        //guard against overriding pollenData on mount
+        if (!userId || !pollenData) return;
+
         updateUserPollen(pollenData, userId);
         updateUserLocationTimestamp(now, userId);
-        setIsLoading(false);
+        // setIsLoading(false);
     }, [pollenData])
 }

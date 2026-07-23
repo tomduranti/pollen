@@ -45,7 +45,7 @@ export function updateUserLocationTimestamp(newTimestamp, userId) {
 
 export function writeUserCredentials(userKey, userValue, userId) {
     const db = getDatabase(app);
-    return set(ref(db, 'users/' + userId), {
+    return update(ref(db, 'users/' + userId), {
         [userKey]: userValue,
     });
 }

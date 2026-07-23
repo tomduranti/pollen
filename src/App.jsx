@@ -1,10 +1,8 @@
 //react and components
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from './components/NavBar/NavBar.jsx';
-import Home from './pages/Home/Home.jsx';
-import AuthForm from './pages/AuthForm/AuthForm.jsx';
-import Location from './pages/Location/Location.jsx';
+import { LoaderCircle } from 'lucide-react';
 
 //css
 import './App.css';
@@ -12,6 +10,10 @@ import './App.css';
 //functions
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/config.js';
+
+const Home = lazy(() => import('./pages/Home/Home.jsx'));
+const Location = lazy(() => import('./pages/Location/Location.jsx'));
+const AuthForm = lazy(() => import('./pages/AuthForm/AuthForm.jsx'));
 
 export default function App() {
   const defaultLocale = 'en';
@@ -37,12 +39,14 @@ export default function App() {
           <NavBar userId={userId} />
         </header>
         <main>
-          <Routes>
-            <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userId={userId} />} />
-            <Route path='signup' element={<AuthForm authMode={'signup'} />} />
-            <Route path='signin' element={<AuthForm authMode={'signin'} />} />
-            <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} userId={userId} />} />
-          </Routes>
+          <Suspense fallback={<LoaderCircle className='animate-spin m-auto' color='#2E7D57E6' size={42} />}>
+            <Routes>
+              <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userId={userId} />} />
+              <Route path='signup' element={<AuthForm authMode={'signup'} />} />
+              <Route path='signin' element={<AuthForm authMode={'signin'} />} />
+              <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} userId={userId} />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </BrowserRouter>

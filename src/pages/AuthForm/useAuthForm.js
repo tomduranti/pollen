@@ -83,7 +83,7 @@ export function useEmailAndPassword(credentials, errorMessageCredentials, setErr
 }
 
 
-export function useGoogleProvider() {
+export function useGoogleProvider({ authMode }) {
 
     const screenWidth = window.innerWidth;
     const GoogleProvider = new GoogleAuthProvider();
@@ -94,6 +94,7 @@ export function useGoogleProvider() {
         if (screenWidth < 575) {
             await signInWithRedirect(auth, GoogleProvider);
 
+            //TODO: please test this in prod or from a domain different from localhost
             getRedirectResult(auth)
                 .then((result) => {
                     // This gives you a Google Access Token. You can use it to access Google APIs.
@@ -116,15 +117,12 @@ export function useGoogleProvider() {
             //if tablet/desktop view
             signInWithPopup(auth, GoogleProvider)
                 .then((result) => {
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    const credential = GoogleAuthProvider.credentialFromResult(result);
-                    const token = credential.accessToken;
-                    // The signed-in user info.
                     const user = result.user;
-
                     //add userName to Database
-                    writeUserCredentials('userName', user.displayName, user.uid);
-
+                    if (authMode === 'signup') {
+                        writeUserCredentials('userName', user.displayName, user.uid);
+                    }
+                    
                     //after user has signed up/signed in, redicrect user to
                     //home if the user signs in, as s/he already chose the location
                     //location if the user signed up because s/he needs to choose a location
@@ -136,15 +134,11 @@ export function useGoogleProvider() {
                     }
                 })
                 .catch((error) => {
-                    // Handle Errors here.
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // The email of the user's account used.
-                    const email = error.customData.email;
-                    // The AuthCredential type that was used.
-                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    if (error.code !== 'auth/popup-closed-by-user') {
+                        console.error("Google Sign-In Error:", error);
+                    }
                 }
-                )
+            )
         }
     }
 }

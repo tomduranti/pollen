@@ -13,12 +13,12 @@ export function getLocationFromAPI(userSign, callback) {
                 timestamp: new Date()
             }
 
-            return (
+            return Promise.all([
                 updateUserLocation(favouriteLocation, userSign),
                 updateUserPollen(null, userSign)
-            )
-                .then(() => {
-                    callback();
-                })
+            ]).then(() => {
+                callback();
+            });
+            
         })
 }

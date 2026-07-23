@@ -1,6 +1,6 @@
 //react and components
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router";
-import { useState } from 'react';
 
 //functions
 import { signOut } from "firebase/auth";
@@ -15,15 +15,15 @@ export default function NavBar({ userId }) {
     let location = useLocation();
     const [userName, setUserName] = useState('');
 
-    if (userId) {
-        getUserName(userId).then(data => {
-            return setUserName(data);
-        })
-    }
+    useEffect(() => {
+        if (userId) {
+            getUserName(userId).then(data => setUserName(data));
+        }
+    }, [userId]);
     
     return (
         <nav className='flex justify-between items-center pbe-5 max-h-11'>
-            <a className='flex gap-2 items-center' href={location.pathname === '/signup' && '/signup' || location.pathname === '/signin' && '/signin'|| location.pathname === '/' && '/'}>
+            <a className='flex gap-2 items-center' href={location.pathname === '/signup' && '/signup' || location.pathname === '/signin' && '/signin' || location.pathname === '/location' && '/location'|| location.pathname === '/' && '/'}>
                     <img src={logo} alt="logo" />
                 <h1 className='text-base font-semibold'>Pollen</h1>
             </a>
@@ -32,7 +32,7 @@ export default function NavBar({ userId }) {
                 : (
                     <div className='flex gap-3 max-w-44 w-full items-center'>
                         {userName && <span className='capitalize truncate text-[.813rem] text-(--color-text-secondary) font-normal'>hi, {userName}</span>}
-                        <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => { signOut(auth), navigate('signup') }}>Sign out</button>
+                        <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => { signOut(auth), navigate('/signup') }}>Sign out</button>
                     </div>
                 )
             }
