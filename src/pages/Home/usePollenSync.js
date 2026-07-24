@@ -37,30 +37,32 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
                                 }))
                         })
                     return;
-                }
-                //if there is previous data stored in DB, and:
-                //i) timestamp from user DB /location is less than 4 hours ago, display stale results
-                else if (!getTimeDifference(now, latestTimestamp, 14400000)) {
+
+                } else {
+                    //if there is previous data stored in DB, always display stale data first to reduce time
+                    setPollenData(data.pollen);
                     setUserLocation(prev => (
                         {
                             ...prev,
                             city: data.location.city,
                             countryName: data.location.countryName,
-                        }))
-                    setPollenData(data.pollen);
-                    updateUserLocationTimestamp(now, userId);
-                } else {
-                    //ii) timestamp from user DB /location is more than 4 hours ago, fetch new data from Pollen API
-                    getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData, setError)
-                        .then(() => {
-                            setUserLocation(prev => (
-                                {
-                                    ...prev,
-                                    city: data.location.city,
-                                    countryName: data.location.countryName,
-                                }))
-                        })
-                        .catch(error => console.error(error))
+                        }));
+
+                    //yet, if user/user.id/location.timestamp is >= 4 hours, fetch new data from Pollen API
+                    //and override stale data
+                    if (getTimeDifference(now, latestTimestamp, 14400000)) {
+                        getPollenFromAPI(defaultOrUserLocale, data.location, setPollenData, setError)
+                            .then(() => {
+                                setUserLocation(prev => (
+                                    {
+                                        ...prev,
+                                        city: data.location.city,
+                                        countryName: data.location.countryName,
+                                    }));
+                            })
+                            .catch(error => console.error(error));
+                    }
+
                 }
             });
         }
@@ -71,9 +73,7 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
     useEffect(() => {
         //guard against overriding pollenData on mount
         if (!userId || !pollenData) return;
-
         updateUserPollen(pollenData, userId);
         updateUserLocationTimestamp(now, userId);
-        // setIsLoading(false);
     }, [pollenData])
 }

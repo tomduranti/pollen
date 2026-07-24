@@ -10,5 +10,5 @@ export default function getTimeDifference(timestamp1, timestamp2, ms) {
      */
 
     const diff = timestamp1.getTime() - timestamp2.getTime();
-    return diff > ms;
+    return diff >= ms;
 }
