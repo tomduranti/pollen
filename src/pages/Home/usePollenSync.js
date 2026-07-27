@@ -13,12 +13,12 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
     const now = new Date;
 
     //userId has 3 conditions: 1) undefined, when the auth is checking the value,
-    //2) null, the user succesfully signed out, 3) String, the user succesfully signed up/in
+    //2) null, the user successfully signed out, 3) String, the user successfully signed up/in
     useEffect(() => {
-        //2) null, the user succesfully signed out
+        //2) null, the user successfully signed out
         if (userId === null) navigate('/signup');
 
-        //3) String, the user succesfully signed up/in
+        //3) String, the user successfully signed up/in
         if (userId) {
 
             //see if previous data are stored in DB
@@ -40,6 +40,7 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
 
                 } else {
                     //if there is previous data stored in DB, always display stale data first to reduce time
+                    //NOTE: this branch always displays stale data and overrides it if necessary. This is so to reduce the time between the request and UI display
                     setPollenData(data.pollen);
                     setUserLocation(prev => (
                         {

@@ -2,7 +2,7 @@ import { updateUserPollen, updateUserLocation } from '../../firebase/readAndWrit
 
 export function getLocationFromAPI(userSign, callback) {
     return (
-        res => {
+        async res => {
             const favouriteLocation = {
                 countryCode: res.features[0].properties.context.country.country_code,
                 countryName: res.features[0].properties.context.country.name,
@@ -13,12 +13,10 @@ export function getLocationFromAPI(userSign, callback) {
                 timestamp: new Date()
             }
 
-            return Promise.all([
+            await Promise.all([
                 updateUserLocation(favouriteLocation, userSign),
                 updateUserPollen(null, userSign)
-            ]).then(() => {
-                callback();
-            });
-            
+            ]);
+            callback();
         })
 }
