@@ -20,11 +20,11 @@ export default function NavBar({ userId }) {
             getUserName(userId).then(data => setUserName(data));
         }
     }, [userId]);
-    
+
     return (
         <nav className='flex justify-between items-center pbe-5 max-h-11'>
-            <a className='flex gap-2 items-center' href={location.pathname === '/signup' && '/signup' || location.pathname === '/signin' && '/signin' || location.pathname === '/location' && '/location'|| location.pathname === '/' && '/'}>
-                    <img src={logo} alt="logo" />
+            <a className='flex gap-2 items-center' href={`${import.meta.env.BASE_URL}` + (location.pathname === '/signup' && 'signup' || location.pathname === '/signin' && 'signin' || location.pathname === '/location' && 'location' || location.pathname === '/' && '')}>
+                <img src={logo} alt="logo" />
                 <h1 className='text-base font-semibold'>Pollen</h1>
             </a>
             {location.pathname === '/signup' || location.pathname === '/signin'
