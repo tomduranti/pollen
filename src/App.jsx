@@ -33,7 +33,7 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/pollen'>
       <div className='flex flex-col mx-auto gap-5 w-full max-w-[88.2%] mbs-3'>
         <header>
           <NavBar userId={userId} />
