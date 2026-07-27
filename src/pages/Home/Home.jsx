@@ -76,12 +76,12 @@ export default function Home({ defaultOrUserLocale, userId }) {
 
                                 <div style={{ width: 200, height: 200, margin: '0 auto' }}>
                                     <CircularProgressbar
-                                        value={pollenData[0].allergyrisk_hourly?.allergyrisk_hourly_1?.[getCurrentHour()]}
+                                        value={pollenData[0].allergyrisk_hourly?.allergyrisk_hourly_1?.[getCurrentHour()] || 0}
                                         maxValue={10}
                                         text={
                                             <tspan dy='2'>
                                                 <tspan style={{ fontSize: '28px', fontWeight: 'medium', fill: '#12171F' }}>
-                                                    {pollenData[0].allergyrisk_hourly?.allergyrisk_hourly_1?.[getCurrentHour()]}
+                                                    {pollenData[0].allergyrisk_hourly?.allergyrisk_hourly_1?.[getCurrentHour()] || 0}
                                                 </tspan>
                                                 <tspan style={{ fontSize: '12px', fontWeight: 'normal', fill: '#6B7280' }}>
                                                     /10
