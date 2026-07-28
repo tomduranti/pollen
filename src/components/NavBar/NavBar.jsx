@@ -19,7 +19,7 @@ export default function NavBar({ userId }) {
         if (userId) {
             getUserName(userId).then(data => setUserName(data));
         }
-    }, [userId]);
+    }, [userId, location.pathname, userName]);
 
     return (
         <nav className='flex justify-between items-center pbe-5 max-h-11'>
@@ -27,11 +27,14 @@ export default function NavBar({ userId }) {
                 <img src={logo} alt="logo" />
                 <h1 className='text-base font-semibold'>Pollen</h1>
             </a>
-            {location.pathname === '/signup' || location.pathname === '/signin'
+            {location.pathname === '/signup' || location.pathname === '/signin' || location.pathname === '/location'
                 ? null
                 : (
-                    <div className='flex gap-3 max-w-44 w-full items-center'>
-                        {userName && <span className='capitalize truncate text-[.813rem] text-(--color-text-secondary) font-normal'>hi, {userName}</span>}
+                    <div className='flex gap-3 max-w-44 w-full items-center justify-end'>
+                        {userName
+                            ? <span className='capitalize truncate text-[.813rem] text-(--color-text-secondary) font-normal'>hi, {userName}</span>
+                            : null
+                        }
                         <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => { signOut(auth), navigate('/signup') }}>Sign out</button>
                     </div>
                 )

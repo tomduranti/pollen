@@ -92,7 +92,7 @@ export default function Home({ defaultOrUserLocale, userId }) {
                                         styles={buildStyles({
                                             rotation: 1 / 2 + (1 - 0.75) / 2,
                                             pathColor: 'url(#riskGradient)', // Reference your gradient ID here
-                                            trailColor: '#EDE9FE',
+                                            trailColor: '#eaecee',
                                             textColor: '#6B7380',
                                             textSize: '22px',
                                             pathTransitionDuration: 1.5,
