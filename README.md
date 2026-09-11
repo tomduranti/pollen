@@ -4,6 +4,8 @@
 
 Web application where users get an hourly forecast of pollen data (pollen name and intensity) given a preferred location. It requires a quick signup before first use.
 
+As per API settings, only the following countries are covered: AT, CH, DE, ES, FR, GB, IT, LV, LT, PL, SE, TR, UA.
+
 This app is non-commercial and expected to be used on a fair-use basis. To limit the workload on their servers, the Austrian Pollen Information Service, from which this app's data comes from, might cap daily calls to 40 requests. This might still serve this app's purpose: after all, pollen data might be checked sparingly as it doesn't mutate often.
 
 ### Built with
