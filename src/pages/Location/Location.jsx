@@ -46,6 +46,7 @@ export default function Location({ defaultOrUserLocale, userId }) {
                 accessToken={`${import.meta.env.VITE_SEARCH_API_KEY}`}
                 options={{
                     language: defaultOrUserLocale,
+                    //TODO: put them in a dedicated list
                     country: 'AT,CH,DE,ES,FR,GB,IT,LV,LT,PL,SE,TR,UA',
                     types: 'city',
                 }}

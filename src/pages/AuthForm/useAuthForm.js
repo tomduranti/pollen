@@ -85,7 +85,7 @@ export function useGoogleProvider() {
     const GoogleProvider = new GoogleAuthProvider();
     const navigate = useNavigate();
 
-    return async () => {
+    return () => {
         signInWithPopup(auth, GoogleProvider)
             .then(result => {
                 const user = result.user;

@@ -3,25 +3,25 @@ import { app } from './config.js'
 
 //* READ */
 export async function isUserLocationSet(userId) {
-    const dbRef = ref(getDatabase());
+    const dbRef = ref(getDatabase(app));
     const snapshot = await get(child(dbRef, `users/${userId}/location`));
     return snapshot.exists() ? true : false;
 }
 
 export async function isUserNameSet(userId) {
-    const dbRef = ref(getDatabase());
+    const dbRef = ref(getDatabase(app));
     const snapshot = await get(child(dbRef, `users/${userId}/userName`));
     return snapshot.exists() ? true : false;
 }
 
 export async function getUserName(userId) {
-    const dbRef = ref(getDatabase());
+    const dbRef = ref(getDatabase(app));
     const snapshot = await get(child(dbRef, `users/${userId}/userName`));
     if (snapshot.exists()) return snapshot.val();
 }
 
 export async function getUserDataFromDataBase(userId) {
-    const dbRef = ref(getDatabase());
+    const dbRef = ref(getDatabase(app));
     const snapshot = await get(child(dbRef, `users/${userId}`));
     if (snapshot.exists()) return snapshot.val();
 }

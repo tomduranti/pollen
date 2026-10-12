@@ -10,7 +10,7 @@ import getTimeDifference from '../../utils/getTimeDifference.js';
 export default function usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setUserLocation, setError) {
 
     const navigate = useNavigate();
-    const now = new Date;
+    const now = new Date();
 
     //userId has 3 conditions: 1) undefined, when the auth is checking the value,
     //2) null, the user successfully signed out, 3) String, the user successfully signed up/in

@@ -20,8 +20,8 @@ export function validatePassword(passwordToValidate) {
     /**
      * Validates a textual input
      *
-     * @param {string} passwordToValidate - Email input string to validate
-     * @returns {Object} success if the email is healthy, otherwise error.
+     * @param {string} passwordToValidate - Password input string to validate
+     * @returns {Object} success if the password is healthy, otherwise error.
      */
     return (
         z
