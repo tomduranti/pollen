@@ -14,6 +14,11 @@ export default function NavBar({ userId }) {
     const navigate = useNavigate();
     let location = useLocation();
     const [userName, setUserName] = useState('');
+    const REDIRECT_URL = location.pathname === '/signup' && 'signup'
+                        || location.pathname === '/signin' && 'signin'
+                        || location.pathname === '/location' && 'location'
+                        || location.pathname === '/' && ''
+                    ;
 
     useEffect(() => {
         if (userId) {
@@ -23,7 +28,7 @@ export default function NavBar({ userId }) {
 
     return (
         <nav className='flex justify-between items-center pbe-5 max-h-11'>
-            <a className='flex gap-2 items-center' href={`${import.meta.env.BASE_URL}` + (location.pathname === '/signup' && 'signup' || location.pathname === '/signin' && 'signin' || location.pathname === '/location' && 'location' || location.pathname === '/' && '')}>
+            <a className='flex gap-2 items-center' href={`${import.meta.env.BASE_URL}` + REDIRECT_URL}>
                 <img src={logo} alt="logo" />
                 <h1 className='text-base font-semibold'>Pollen</h1>
             </a>
@@ -35,7 +40,7 @@ export default function NavBar({ userId }) {
                             ? <span className='capitalize truncate text-[.813rem] text-(--color-text-secondary) font-normal'>hi, {userName}</span>
                             : null
                         }
-                        <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => { signOut(auth), navigate('/signup') }}>Sign out</button>
+                        <button className='cta button border-(--color-border) py-1.5 max-w-19 w-full text-[.813rem] font-medium' type='button' onClick={() => [signOut(auth), navigate('/signup')] }>Sign out</button>
                     </div>
                 )
             }

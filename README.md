@@ -11,7 +11,7 @@ This app is non-commercial and expected to be used on a fair-use basis. To limit
 ### Built with
 
 - RESTful API (Geocoding API, Polleninformation API)
-- React 18 & Vite, React Router v6
+- React & Vite, React Router
 - Zod
 - Firebase & Realtime Database
 - Semantic HTML5, Tailwind CSS
@@ -31,8 +31,6 @@ This app is non-commercial and expected to be used on a fair-use basis. To limit
 createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
 [...]
 signInWithEmailAndPassword(auth, credentials.email, credentials.password)
-[...]
-signInWithRedirect(auth, GoogleProvider)
 [...]
 signInWithPopup(auth, GoogleProvider)
 ```

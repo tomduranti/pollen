@@ -1,57 +1,99 @@
 import { getDatabase, ref, update, get, child } from "firebase/database";
 import { app } from './config.js'
 
-//* READ */
+/* READ */
 export async function isUserLocationSet(userId) {
-    const dbRef = ref(getDatabase(app));
-    const snapshot = await get(child(dbRef, `users/${userId}/location`));
-    return snapshot.exists() ? true : false;
+    try {
+        const dbRef = ref(getDatabase(app));
+        const snapshot = await get(child(dbRef, `users/${userId}/location`));
+        return snapshot.exists();
+    } catch (error) {
+        console.error('Error checking if user location is set:', error);
+        return false;
+    }
 }
 
 export async function isUserNameSet(userId) {
-    const dbRef = ref(getDatabase(app));
-    const snapshot = await get(child(dbRef, `users/${userId}/userName`));
-    return snapshot.exists() ? true : false;
+    try {
+        const dbRef = ref(getDatabase(app));
+        const snapshot = await get(child(dbRef, `users/${userId}/userName`));
+        return snapshot.exists();
+    } catch (error) {
+        console.error('Error checking if user name is set:', error);
+        return false;
+    }
 }
 
 export async function getUserName(userId) {
-    const dbRef = ref(getDatabase(app));
-    const snapshot = await get(child(dbRef, `users/${userId}/userName`));
-    if (snapshot.exists()) return snapshot.val();
+    try {
+        const dbRef = ref(getDatabase(app));
+        const snapshot = await get(child(dbRef, `users/${userId}/userName`));
+        if (snapshot.exists()) return snapshot.val();
+        return null;
+    } catch (error) {
+        console.error('Error fetching user name:', error);
+        return null;
+    }
 }
 
 export async function getUserDataFromDataBase(userId) {
-    const dbRef = ref(getDatabase(app));
-    const snapshot = await get(child(dbRef, `users/${userId}`));
-    if (snapshot.exists()) return snapshot.val();
+    try {
+        const dbRef = ref(getDatabase(app));
+        const snapshot = await get(child(dbRef, `users/${userId}`));
+        if (snapshot.exists()) return snapshot.val();
+        return null;
+    } catch (error) {
+        console.error('Error fetching user data from database:', error);
+        return null;
+    }
 }
 
 
-//* WRITE */
+/* WRITE */
 export function updateUserPollen(userValue, userId) {
-    const db = getDatabase(app);
-    const updates = {};
-    updates['users/' + userId + '/pollen/'] = userValue;
-    return update(ref(db), updates);
+    try {
+        const db = getDatabase(app);
+        const updates = {};
+        updates['users/' + userId + '/pollen/'] = userValue;
+        return update(ref(db), updates);
+    } catch (error) {
+        console.error('Error updating user pollen:', error);
+        return Promise.reject(error);
+    }
 }
 
 export function updateUserLocation(userValue, userId) {
-    const db = getDatabase(app);
-    const updates = {};
-    updates['users/' + userId + '/location'] = userValue;
-    return update(ref(db), updates);
+    try {
+        const db = getDatabase(app);
+        const updates = {};
+        updates['users/' + userId + '/location'] = userValue;
+        return update(ref(db), updates);
+    } catch (error) {
+        console.error('Error updating user location:', error);
+        return Promise.reject(error);
+    }
 }
 
 export function updateUserLocationTimestamp(newTimestamp, userId) {
-    const db = getDatabase(app);
-    return update(ref(db, 'users/' + userId + '/location'), {
-        timestamp: newTimestamp,
-    });
+    try {
+        const db = getDatabase(app);
+        return update(ref(db, 'users/' + userId + '/location'), {
+            timestamp: newTimestamp,
+        });
+    } catch (error) {
+        console.error('Error updating user location timestamp:', error);
+        return Promise.reject(error);
+    }
 }
 
 export function writeUserCredentials(userKey, userValue, userId) {
-    const db = getDatabase(app);
-    return update(ref(db, 'users/' + userId), {
-        [userKey]: userValue,
-    });
+    try {
+        const db = getDatabase(app);
+        return update(ref(db, 'users/' + userId), {
+            [userKey]: userValue,
+        });
+    } catch (error) {
+        console.error('Error writing user credentials:', error);
+        return Promise.reject(error);
+    }
 }

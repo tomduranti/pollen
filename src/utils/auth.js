@@ -48,13 +48,7 @@ export function validateForm(email, password, arrayError, wrapperError) {
     const emailSchema = validateEmail(email);
     const passwordSchema = validatePassword(password);
 
-    !emailSchema.success
-        ? wrapperError({ ...arrayError, errorEmail: emailSchema.error.issues[0].message })
-        : null;
-
-    !passwordSchema.success
-        ? wrapperError({ ...arrayError, errorPassword: passwordSchema.error.issues[0].message })
-        : null;
-
+    !emailSchema.success && wrapperError({ ...arrayError, errorEmail: emailSchema.error.issues[0].message });
+    !passwordSchema.success && wrapperError({ ...arrayError, errorPassword: passwordSchema.error.issues[0].message });
     if (emailSchema.success && passwordSchema.success) return true;
 }
