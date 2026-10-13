@@ -1,0 +1,1 @@
+export { getLocationFromAPI } from '@utils/useLocationApi.js';

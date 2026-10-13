@@ -1,7 +1,7 @@
 //react and components
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
-import NavBar from './components/NavBar/NavBar.jsx';
+import NavBar from '@organisms/NavBar/NavBar.jsx';
 import { LoaderCircle } from 'lucide-react';
 
 //css
@@ -9,7 +9,7 @@ import './App.css';
 
 //functions
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase/config.js';
+import { auth } from '@utils/firebase/config.js';
 
 const Home = lazy(() => import('./pages/Home/Home.jsx'));
 const Location = lazy(() => import('./pages/Location/Location.jsx'));

@@ -4,12 +4,13 @@ import { Link } from 'react-router';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { LoaderCircle } from 'lucide-react';
 
-//functions
-import getCurrentHour from '../../utils/getCurrentHour.js';
-import usePollenSync from './usePollenSync.js';
-
 //css
 import 'react-circular-progressbar/dist/styles.css';
+
+//functions
+import getCurrentHour from '@/utils/getCurrentHour.js';
+import usePollenSync from '@utils/usePollenSync.js';
+
 
 export default function Home({ defaultOrUserLocale, userId }) {
 

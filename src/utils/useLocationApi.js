@@ -1,4 +1,4 @@
-import { updateUserPollen, updateUserLocation } from '../../firebase/readAndWrite.js';
+import { updateUserPollen, updateUserLocation } from '@utils/firebase/readAndWrite.js';
 
 export function getLocationFromAPI(userSign, callback) {
     return (

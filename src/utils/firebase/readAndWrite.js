@@ -1,5 +1,5 @@
 import { getDatabase, ref, update, get, child } from "firebase/database";
-import { app } from './config.js'
+import { app } from '@utils/firebase/config.js'
 
 /* READ */
 export async function isUserLocationSet(userId) {

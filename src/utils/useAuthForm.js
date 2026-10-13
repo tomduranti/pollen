@@ -2,15 +2,10 @@
 import { useNavigate } from "react-router";
 
 //functions
-import { validateForm } from '../../utils/auth.js';
-import { writeUserCredentials, isUserLocationSet, isUserNameSet } from '../../firebase/readAndWrite.js';
-import { auth } from "../../firebase/config.js";
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signInWithPopup,
-    GoogleAuthProvider
-} from "firebase/auth";
+import { validateForm } from '@utils/auth.js';
+import { writeUserCredentials, isUserLocationSet, isUserNameSet } from '@utils/firebase/readAndWrite.js';
+import { auth } from "@utils/firebase/config.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 
 export function useEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, setErrorMessageValidation, setIsLoading) {
