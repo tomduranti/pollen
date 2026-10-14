@@ -11,26 +11,28 @@ import './App.css';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@utils/firebase/config.js';
 
-const Home = lazy(() => import('./pages/Home/Home.jsx'));
-const Location = lazy(() => import('./pages/Location/Location.jsx'));
-const AuthForm = lazy(() => import('./pages/AuthForm/AuthForm.jsx'));
+const Home = lazy(() => import('@pages/Home/Home.jsx'));
+const Location = lazy(() => import('@pages/Location/Location.jsx'));
+const AuthForm = lazy(() => import('@pages/AuthForm/AuthForm.jsx'));
 
 export default function App() {
   const defaultLocale = 'en';
   const [userId, setUserId] = useState();
-  const [userEmail, setUserEmail] = useState();
+
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   //observer that checks if the user signed in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       if (user) {
         setUserId(user.uid);
-        setUserEmail(user.email);
+        setIsAuthLoading(!isAuthLoading);
       } else {
         setUserId(null);
       }
-    });
-
+    }
+  );
+  setIsAuthLoading(false);
     return () => unsubscribe();
   }, []);
 
@@ -43,7 +45,7 @@ export default function App() {
         <main>
           <Suspense fallback={<LoaderCircle className='animate-spin m-auto' color='#2E7D57E6' size={42} />}>
             <Routes>
-              <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userId={userId} userEmail={userEmail} />} />
+              <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} userId={userId} />} />
               <Route path='signup' element={<AuthForm authMode={'signup'} />} />
               <Route path='signin' element={<AuthForm authMode={'signin'} />} />
               <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} userId={userId} />} />

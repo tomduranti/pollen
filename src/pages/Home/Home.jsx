@@ -8,7 +8,7 @@ import { LoaderCircle } from 'lucide-react';
 import 'react-circular-progressbar/dist/styles.css';
 
 //functions
-import getCurrentHour from '@/utils/getCurrentHour.js';
+import getCurrentHour from '@utils/getCurrentHour.js';
 import usePollenSync from '@utils/usePollenSync.js';
 
 

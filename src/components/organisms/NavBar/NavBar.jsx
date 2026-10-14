@@ -12,13 +12,13 @@ export default function NavBar({ userId }) {
     
     let location = useLocation();
     const [userName, setUserName] = useState('');
-    const isLocationForSignedInUser = ['/signup', '/signin', '/location'].includes(location.pathname);
+    const isLocationForSignedInUser = ['/signup', '/signin'].includes(location.pathname);
 
     useEffect(() => {
         if (userId) {
             getUserName(userId).then(data => setUserName(data));
         }
-    }, [userId, location.pathname, userName]);
+    }, [userId, location.pathname]);
 
 
     return (

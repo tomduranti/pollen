@@ -13,6 +13,7 @@
   "dependencies": {
     "@mapbox/search-js-react": "^1.5.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/react-query": "^5.104.2",
     "firebase": "^12.15.0",
     "lucide-react": "^1.25.0",
     "react": "^19.2.7",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tanstack/eslint-plugin-query": "^5.104.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",

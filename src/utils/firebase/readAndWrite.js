@@ -1,10 +1,12 @@
 import { getDatabase, ref, update, get, child } from "firebase/database";
 import { app } from '@utils/firebase/config.js'
 
+const dbRef = ref(getDatabase(app));
+const db = getDatabase(app);
+
 /* READ */
 export async function isUserLocationSet(userId) {
     try {
-        const dbRef = ref(getDatabase(app));
         const snapshot = await get(child(dbRef, `users/${userId}/location`));
         return snapshot.exists();
     } catch (error) {
@@ -15,7 +17,6 @@ export async function isUserLocationSet(userId) {
 
 export async function isUserNameSet(userId) {
     try {
-        const dbRef = ref(getDatabase(app));
         const snapshot = await get(child(dbRef, `users/${userId}/userName`));
         return snapshot.exists();
     } catch (error) {
@@ -26,7 +27,6 @@ export async function isUserNameSet(userId) {
 
 export async function getUserName(userId) {
     try {
-        const dbRef = ref(getDatabase(app));
         const snapshot = await get(child(dbRef, `users/${userId}/userName`));
         if (snapshot.exists()) return snapshot.val();
         return null;
@@ -38,7 +38,6 @@ export async function getUserName(userId) {
 
 export async function getUserDataFromDataBase(userId) {
     try {
-        const dbRef = ref(getDatabase(app));
         const snapshot = await get(child(dbRef, `users/${userId}`));
         if (snapshot.exists()) return snapshot.val();
         return null;
@@ -52,7 +51,6 @@ export async function getUserDataFromDataBase(userId) {
 /* WRITE */
 export function updateUserPollen(userValue, userId) {
     try {
-        const db = getDatabase(app);
         const updates = {};
         updates['users/' + userId + '/pollen/'] = userValue;
         return update(ref(db), updates);
@@ -64,7 +62,6 @@ export function updateUserPollen(userValue, userId) {
 
 export function updateUserLocation(userValue, userId) {
     try {
-        const db = getDatabase(app);
         const updates = {};
         updates['users/' + userId + '/location'] = userValue;
         return update(ref(db), updates);
@@ -76,7 +73,6 @@ export function updateUserLocation(userValue, userId) {
 
 export function updateUserLocationTimestamp(newTimestamp, userId) {
     try {
-        const db = getDatabase(app);
         return update(ref(db, 'users/' + userId + '/location'), {
             timestamp: newTimestamp,
         });
@@ -88,7 +84,6 @@ export function updateUserLocationTimestamp(newTimestamp, userId) {
 
 export function writeUserCredentials(userKey, userValue, userId) {
     try {
-        const db = getDatabase(app);
         return update(ref(db, 'users/' + userId), {
             [userKey]: userValue,
         });
