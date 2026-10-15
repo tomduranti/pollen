@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import { LoaderCircle } from 'lucide-react';
+import Loading from '@atoms/Loading/Loading.jsx';
 import { useContext } from 'react';
 import { AuthContext } from '@context/context.js';
 
@@ -108,7 +108,7 @@ export default function Home({ defaultOrUserLocale }) {
                                 <ul className='flex flex-col gap-3 md:place-self-start md:w-[80%]'>{filteredPollenList}</ul>
                             </section>
                         )
-                        : <LoaderCircle className='animate-spin m-auto' color='#2E7D57E6' size={42} />
+                        : <Loading />
             }
         </>
     )

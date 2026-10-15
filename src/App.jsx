@@ -2,7 +2,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from '@organisms/NavBar/NavBar.jsx';
-import { LoaderCircle } from 'lucide-react';
+import Loading from '@atoms/Loading/Loading';
 import { AuthContext } from '@context/context.js';
 import { Home, Location, AuthForm } from '@utils/index.js';
 
@@ -39,7 +39,7 @@ export default function App() {
             <NavBar />
           </header>
           <main>
-            <Suspense fallback={<LoaderCircle className='animate-spin m-auto' color='#2E7D57E6' size={42} />}>
+            <Suspense fallback={<Loading />}>
               <Routes>
                 <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} />} />
                 <Route path='signup' element={<AuthForm authMode={'signup'} />} />
@@ -51,5 +51,5 @@ export default function App() {
         </div>
       </BrowserRouter>
     </AuthContext.Provider>
-  )
+  );
 }
