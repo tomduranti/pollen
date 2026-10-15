@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { LoaderCircle } from 'lucide-react';
+import { useContext } from 'react';
+import { AuthContext } from '@context/context.js';
 
 //css
 import 'react-circular-progressbar/dist/styles.css';
@@ -12,11 +14,12 @@ import getCurrentHour from '@utils/getCurrentHour.js';
 import usePollenSync from '@utils/usePollenSync.js';
 
 
-export default function Home({ defaultOrUserLocale, userId }) {
+export default function Home({ defaultOrUserLocale }) {
 
     const [pollenData, setPollenData] = useState();
     const [error, setError] = useState();
     const [userLocation, setUserLocation] = useState({ city: '', countryName: '' });
+    const [userId] = useContext(AuthContext);
     //filter only active pollens to display
     let filteredPollenList = [];
     let activePollen = [];
