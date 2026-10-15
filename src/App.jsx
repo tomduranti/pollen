@@ -1,9 +1,10 @@
-//react and components
+//react
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from '@organisms/NavBar/NavBar.jsx';
 import { LoaderCircle } from 'lucide-react';
 import { AuthContext } from '@context/context.js';
+import { Home, Location, AuthForm } from '@utils/index.js';
 
 //css
 import './App.css';
@@ -12,9 +13,6 @@ import './App.css';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@utils/firebase/config.js';
 
-const Home = lazy(() => import('@pages/Home/Home.jsx'));
-const Location = lazy(() => import('@pages/Location/Location.jsx'));
-const AuthForm = lazy(() => import('@pages/AuthForm/AuthForm.jsx'));
 
 export default function App() {
   const defaultLocale = 'en';
