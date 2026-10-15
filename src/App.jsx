@@ -1,8 +1,9 @@
 //react
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import NavBar from '@organisms/NavBar/NavBar.jsx';
 import Loading from '@atoms/Loading/Loading';
+import ProtectedRoute from '@atoms/ProtectedRoute/ProtectedRoute.jsx';
 import { AuthContext } from '@context/context.js';
 import { Home, Location, AuthForm } from '@utils/index.js';
 
@@ -24,7 +25,7 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, user => {
       //checks whether user signed in or not
       user ? setUserId(user.uid) : setUserId(null);
-      //we know whether the user signed in or not 
+      //we know whether the user signed in or not
       setIsAuthLoading(false);
     }
     );
@@ -41,10 +42,15 @@ export default function App() {
           <main>
             <Suspense fallback={<Loading />}>
               <Routes>
-                <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} />} />
+                {/* Public routes */}
                 <Route path='signup' element={<AuthForm authMode={'signup'} />} />
                 <Route path='signin' element={<AuthForm authMode={'signin'} />} />
-                <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} />} />
+
+                {/* Private routes */}
+                <Route element={<ProtectedRoute loading={isAuthLoading} />}>
+                  <Route path='/' element={<Home defaultOrUserLocale={defaultLocale} />} />
+                  <Route path='/location' element={<Location defaultOrUserLocale={defaultLocale} />} />
+                </Route>
               </Routes>
             </Suspense>
           </main>
