@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router';
 
 //functions
 import { getPollenFromAPI } from '@utils/usePollenApi.js';
-import { updateUserPollenData, updateUserLocationTimestamp, readUserData } from '@utils/firebase/crud.js';
-import getTimeDifference from '@utils/getTimeDifference.js';
+import { updateUserPollenData, updateUserLocationTimestamp, readUserData, getTimeDifference } from '@utils/index.js';
 
 export default function usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setUserLocation, setError) {
 

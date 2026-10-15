@@ -7,6 +7,7 @@ export function validateEmail(emailToValidate) {
      * @param {string} emailToValidate - Email input string to validate
      * @returns {Object} success if the email is healthy, otherwise error.
      */
+    
     return (
         z
             .string()
@@ -23,6 +24,7 @@ export function validatePassword(passwordToValidate) {
      * @param {string} passwordToValidate - Password input string to validate
      * @returns {Object} success if the password is healthy, otherwise error.
      */
+
     return (
         z
             .string()
@@ -34,7 +36,7 @@ export function validatePassword(passwordToValidate) {
     )
 }
 
-export function validateForm(email, password, arrayError, wrapperError) {
+export function isFormValid(email, password, arrayError, wrapperError) {
     /**
      * Returns errors, if any, from email and password validation. Otherwise, it return true, meaning that both email
      * password are valid.
@@ -45,10 +47,12 @@ export function validateForm(email, password, arrayError, wrapperError) {
      * @param {function(string)} wrapperError - Setter function to populate arrayError
      * @returns {boolean} True if both email and password are healthy.
      */
+
     const emailSchema = validateEmail(email);
     const passwordSchema = validatePassword(password);
 
     !emailSchema.success && wrapperError({ ...arrayError, errorEmail: emailSchema.error.issues[0].message });
     !passwordSchema.success && wrapperError({ ...arrayError, errorPassword: passwordSchema.error.issues[0].message });
+
     if (emailSchema.success && passwordSchema.success) return true;
 }

@@ -1,12 +1,13 @@
 //react
 import { useState } from 'react';
+import { useNavigate } from "react-router";
 import SignInButton from '@atoms/Buttons/SignInButton.jsx';
 import InputField from '@atoms/InputField/InputField.jsx';
 import AuthToggle from '@atoms/AuthToggle/AuthToggle.jsx';
 import ErrorBanner from '@atoms/ErrorBanner/ErrorBanner.jsx';
 
 //functions
-import { useEmailAndPassword } from '@utils/useAuthForm.js';
+import { authWithEmailAndPassword } from '@utils/index.js';
 
 
 export default function FormToSignUpOrIn({ authMode }) {
@@ -14,12 +15,14 @@ export default function FormToSignUpOrIn({ authMode }) {
         e.preventDefault();
         handleClickEmailAndPassword(e);
     };
+
+    const navigate = useNavigate();
     
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [errorMessageCredentials, setErrorMessageCredentials] = useState({ errorEmail: '', errorPassword: '' });
     const [errorMessageValidation, setErrorMessageValidation] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const handleClickEmailAndPassword = useEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, setErrorMessageValidation, setIsLoading);
+    const handleClickEmailAndPassword = authWithEmailAndPassword(credentials, errorMessageCredentials, setErrorMessageCredentials, authMode, setErrorMessageValidation, setIsLoading, navigate);
 
     
     return (

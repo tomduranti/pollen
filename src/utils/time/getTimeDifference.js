@@ -1,4 +1,4 @@
-export default function getTimeDifference(timestamp1, timestamp2, ms) {
+export function getTimeDifference(timestamp1, timestamp2, ms) {
     /**
      * Compares two timestamps and returns true if the difference 
      * is greater than the given milliseconds.

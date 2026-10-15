@@ -1,16 +1,20 @@
+//react
+import { useNavigate } from "react-router";
+
 //functions
-import { useGoogleProvider } from '@utils/useAuthForm.js';
+import { authWithGoogleProvider } from '@utils/index.js';
 
 //svg
 import googleLogo from '@assets/icon_google.svg';
 
-export default function ButtonProvider({ provider, authMode }) {
+export default function ButtonProvider({ provider }) {
     let src;
     let handler;
     let textToDisplay;
-    const handleClickGoogleProvider = useGoogleProvider(authMode);
+    const navigate = useNavigate();
+    const handleClickGoogleProvider = authWithGoogleProvider(navigate);
 
-    switch(provider) {
+    switch (provider) {
         case 'google':
             src = googleLogo;
             handler = handleClickGoogleProvider;
