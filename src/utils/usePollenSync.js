@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 //functions
-import { getPollenFromAPI } from './usePollenApi.js';
-import { updateUserPollen, updateUserLocationTimestamp, getUserDataFromDataBase } from './firebase/readAndWrite.js';
-import getTimeDifference from './getTimeDifference.js';
+import { getPollenFromAPI } from '@utils/usePollenApi.js';
+import { updateUserPollenData, updateUserLocationTimestamp, readUserData } from '@utils/firebase/crud.js';
+import getTimeDifference from '@utils/getTimeDifference.js';
 
 export default function usePollenSync(userId, defaultOrUserLocale, pollenData, setPollenData, setUserLocation, setError) {
 
@@ -22,7 +22,7 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
         if (userId) {
 
             //see if previous data are stored in DB
-            getUserDataFromDataBase(userId).then(data => {
+            readUserData(userId).then(data => {
                 const latestTimestamp = new Date(data.location.timestamp);
 
                 //if there is no previous data stored in DB, fetch and store fresh data
@@ -74,7 +74,7 @@ export default function usePollenSync(userId, defaultOrUserLocale, pollenData, s
     useEffect(() => {
         //guard against overriding pollenData on mount
         if (!userId || !pollenData) return;
-        updateUserPollen(pollenData, userId);
+        updateUserPollenData(pollenData, userId);
         updateUserLocationTimestamp(now, userId);
     }, [pollenData])
 }

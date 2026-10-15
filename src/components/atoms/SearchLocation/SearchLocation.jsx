@@ -1,12 +1,15 @@
 //react
 import { useNavigate } from 'react-router';
 import { SearchBox } from '@mapbox/search-js-react';
+import { useContext } from 'react';
+import { AuthContext } from '@context/context.js';
 
 //functions
-import { getLocationFromAPI } from '@utils/index.js';
+import { handleRetrieve } from '@utils/index.js';
 
 
-export default function SearchLocation({ locale, userId }) {
+export default function SearchLocation({ locale }) {
+    const [userId] = useContext(AuthContext);
     //if the user sets a location, this is saved in DB and the user is redirected to /home to see the results
     const navigate = useNavigate();
 
@@ -53,7 +56,7 @@ export default function SearchLocation({ locale, userId }) {
                 types: 'city',
             }}
             placeholder='Search a location'
-            onRetrieve={getLocationFromAPI(userId, () => navigate('/'))}
+            onRetrieve={handleRetrieve(userId, () => navigate('/'))}
         />
     )
 }

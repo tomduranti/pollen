@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { AuthContext } from '@context/context.js';
 
 //functions
-import { getUserName } from '@utils/firebase/readAndWrite.js';
+import { readUserName } from '@utils/firebase/crud.js';
 
 
 export default function NavBar() {
@@ -18,9 +18,7 @@ export default function NavBar() {
     const [userId] = useContext(AuthContext);
 
     useEffect(() => {
-        if (userId) {
-            getUserName(userId).then(data => setUserName(data));
-        }
+        if (userId) readUserName(userId).then(data => setUserName(data));
     }, [userId]);
 
 

@@ -2,8 +2,8 @@
 import { useNavigate } from "react-router";
 
 //functions
-import { validateForm } from '@utils/auth.js';
-import { writeUserCredentials, isUserLocationSet, isUserNameSet } from '@utils/firebase/readAndWrite.js';
+import { validateForm } from '@utils/zod/zod.js';
+import { createUserData, isUserLocationSet, isUserNameSet } from '@utils/firebase/crud.js';
 import { auth } from "@utils/firebase/config.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
@@ -37,7 +37,7 @@ export function useEmailAndPassword(credentials, errorMessageCredentials, setErr
                     if (errorMessage) return;
                     setErrorMessageValidation(false);
                     //add userName to Database
-                    writeUserCredentials('userName', credentials.userName, user.uid);
+                    createUserData('userName', credentials.userName, user.uid);
                     //finally, redirect user to choose its location
                     if (errorMessage === false) return navigate('/location');
                 })
@@ -90,7 +90,7 @@ export function useGoogleProvider() {
                 //location if the user signed up because s/he needs to choose a location
                 if (user) {
                     //if no userName, add userName to Database
-                    !isUserNameSet(user.uid).then(() => writeUserCredentials('userName', user.displayName, user.uid));
+                    !isUserNameSet(user.uid).then(() => createUserData('userName', user.displayName, user.uid));
 
                     isUserLocationSet(user.uid).then(isLocationAlreadySet => {
                         isLocationAlreadySet ? navigate('/') : navigate('/location');
