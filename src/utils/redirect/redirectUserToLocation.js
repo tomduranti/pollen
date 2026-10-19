@@ -2,5 +2,5 @@
 import { isUserLocationSet } from '@utils/index.js';
 
 export async function redirectUserToLocation(userId, goto) {
-    goto(await isUserLocationSet(userId) ? '/' : '/location');
+  goto((await isUserLocationSet(userId)) ? '/' : '/location');
 }

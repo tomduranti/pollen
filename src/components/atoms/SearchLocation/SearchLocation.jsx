@@ -1,22 +1,21 @@
 //react
-import { useNavigate } from 'react-router';
 import { SearchBox } from '@mapbox/search-js-react';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router';
+
 import { AuthContext } from '@context/context.js';
 
-//functions
 import { handleRetrieve } from '@utils/index.js';
 
-
 export default function SearchLocation({ locale }) {
-    const [userId] = useContext(AuthContext);
-    //if the user sets a location, this is saved in DB and the user is redirected to /home to see the results
-    const navigate = useNavigate();
+  const [userId] = useContext(AuthContext);
+  //if the user sets a location, this is saved in DB and the user is redirected to /home to see the results
+  const navigate = useNavigate();
 
-    return (
-        <SearchBox
-            theme={{
-                cssText: `
+  return (
+    <SearchBox
+      theme={{
+        cssText: `
             .Input {
                 height: 2.938rem;
                 border-radius: 1.875rem;
@@ -39,24 +38,24 @@ export default function SearchLocation({ locale }) {
                 font-size: 0.875rem;
             }
         `,
-                variables: {
-                    colorPrimary: '#6B7280',
-                    colorBackground: '#FFFFFF',
-                    fontFamily: 'Inter, sans-serif',
-                    borderRadius: '1.875rem',
-                    border: '1px solid #E3E8ED',
-                    boxShadow: 'none',
-                },
-            }}
-            accessToken={`${import.meta.env.VITE_SEARCH_API_KEY}`}
-            options={{
-                language: locale,
-                //TODO: put them in a dedicated list
-                country: 'AT,CH,DE,ES,FR,GB,IT,LV,LT,PL,SE,TR,UA',
-                types: 'city',
-            }}
-            placeholder='Search a location'
-            onRetrieve={handleRetrieve(userId, () => navigate('/'))}
-        />
-    )
+        variables: {
+          colorPrimary: '#6B7280',
+          colorBackground: '#FFFFFF',
+          fontFamily: 'Inter, sans-serif',
+          borderRadius: '1.875rem',
+          border: '1px solid #E3E8ED',
+          boxShadow: 'none',
+        },
+      }}
+      accessToken={`${import.meta.env.VITE_SEARCH_API_KEY}`}
+      options={{
+        language: locale,
+        //TODO: put them in a dedicated list
+        country: 'AT,CH,DE,ES,FR,GB,IT,LV,LT,PL,SE,TR,UA',
+        types: 'city',
+      }}
+      placeholder='Search a location'
+      onRetrieve={handleRetrieve(userId, () => navigate('/'))}
+    />
+  );
 }
