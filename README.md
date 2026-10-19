@@ -11,7 +11,8 @@ This app is non-commercial and expected to be used on a fair-use basis. To limit
 ### Built with
 
 - RESTful API (Geocoding API, Polleninformation API)
-- React 18 & Vite, React Router v6
+- React & Vite, React Router
+- Tan Stack Query
 - Zod
 - Firebase & Realtime Database
 - Semantic HTML5, Tailwind CSS
@@ -32,11 +33,18 @@ createUserWithEmailAndPassword(auth, credentials.email, credentials.password)
 [...]
 signInWithEmailAndPassword(auth, credentials.email, credentials.password)
 [...]
-signInWithRedirect(auth, GoogleProvider)
-[...]
 signInWithPopup(auth, GoogleProvider)
 ```
-- Caching layer because of a rate-limited pollen API, with timestamp to check freshness of data (4h threshold) to avoid unnecessary calls
+- Caching layer because of a rate-limited pollen API, with timestamp to check freshness of data (4h threshold), managed by Tan Stack Query.
+
+- Protected routes for public and private navigation
+```
+export default function ProtectedRoute({ loading }) {
+  const [userId] = useContext(AuthContext);
+  if (loading) return null;
+  return userId ? <Outlet /> : <Navigate to='/signin' replace />;
+}
+```
 
 - Zod email and password validation
 ```
@@ -77,10 +85,6 @@ All notable changes to this project will be documented in this file. The format 
 ![ADDED](https://img.shields.io/badge/ADDED-green)
 - language support for German (de), Finnish (fi), Swedish (sv), French (fr), Italian (it), Latvian (lv), Lithuanian (lt), Polish (pl), Portuguese (pt), Russian (ru), Slovak (sk), Spanish (es), Turkish (tr), Ukrainian (uk), and Hungarian (hu)
 - personalized messages for users according to pollen severity
-
-#### [v1.3.0] -- Unreleased
-![ADDED](https://img.shields.io/badge/ADDED-green)
-- Unit, integration and E2E tests
 
 #### [v2.0.0] -- Unreleased
 ![CHANGED](https://img.shields.io/badge/CHANGED-blue)
